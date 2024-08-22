@@ -2,58 +2,69 @@ body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
     background-color: #121212;
-    color: #e0e0e0;
     line-height: 1.6;
+    color: #e0e0e0; /* Default text color */
 }
 
 header {
     text-align: center;
     padding: 50px 20px;
     background-color: #1e1e1e;
-    border-bottom: 1px solid #333;
-}
-
-header .logo {
-    width: 100px; /* Adjust the size as needed */
-    height: auto;
-    margin-bottom: 20px;
+    color: #8ac6d1; /* Light Cyan for header text */
 }
 
 header h1 {
     font-size: 3em;
     margin-bottom: 10px;
-    color: #8ac6d1; /* Light Cyan for the main heading */
+    color: #f39c12; /* Golden Yellow for main heading */
 }
 
 header p {
     font-size: 1.2em;
-    color: #f39c12; /* Golden Yellow for the subheading */
 }
 
-section {
-    padding: 60px 20px;
-    max-width: 800px;
-    margin: 0 auto;
+#about {
+    background-color: #2b2b2b;
+    color: #e0e0e0; /* Light Gray text */
 }
 
-h2 {
-    font-size: 2em;
-    margin-bottom: 20px;
-    color: #8ac6d1; /* Light Cyan for section titles */
+#key-components {
+    background-color: #333333;
+    color: #ffcc00; /* Amber text */
 }
 
-h3 {
-    font-size: 1.5em;
-    margin-bottom: 15px;
-    color: #f39c12; /* Golden Yellow for sub-section titles */
+#key-components h3 {
+    color: #e0e0e0; /* Light Gray for sub-section headings */
 }
 
-ul li {
-    background: #333;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-    color: #e0e0e0; /* Primary text color */
+#integration {
+    background-color: #242424;
+    color: #8ac6d1; /* Light Cyan text */
+}
+
+#achievements {
+    background-color: #292929;
+    color: #f39c12; /* Golden Yellow text */
+}
+
+#unique-features {
+    background-color: #1f1f1f;
+    color: #ffcc00; /* Amber text */
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #1a1a1a;
+    color: #8ac6d1; /* Light Cyan for footer text */
+}
+
+footer a {
+    color: #1e90ff; /* Link color in the footer */
+}
+
+footer a:hover {
+    text-decoration: underline;
 }
 
 a {
@@ -65,18 +76,20 @@ a:hover {
     text-decoration: underline; /* Underline on hover */
 }
 
-footer {
-    text-align: center;
-    padding: 20px 0;
-    background-color: #1e1e1e;
-    border-top: 1px solid #333;
-    color: #8ac6d1; /* Light Cyan for footer text */
+section {
+    padding: 60px 20px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-footer a {
-    color: #1e90ff; /* Link color in the footer */
+h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: inherit; /* Use the text color defined for each section */
 }
 
-footer a:hover {
-    text-decoration: underline;
+h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: inherit; /* Use the text color defined for each section */
 }
