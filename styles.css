@@ -6,57 +6,68 @@ body {
     color: #e0e0e0; /* Default text color */
 }
 
+/* Global Text Colors */
+h1, h2, h3 {
+    color: #f39c12; /* Golden color for all titles */
+}
+
+p, li {
+    color: #8ac6d1; /* Cyan color for all descriptions and list items */
+}
+
 header {
     text-align: center;
     padding: 50px 20px;
     background-color: #1e1e1e;
-    color: #8ac6d1; /* Light Cyan for header text */
+    border-bottom: 1px solid #333;
+}
+header .logo {
+    width: 100px; /* Adjust the size as needed */
+    height: auto;
+    margin-bottom: 20px;
 }
 
 header h1 {
     font-size: 3em;
     margin-bottom: 10px;
-    color: #f39c12; /* Golden Yellow for main heading */
 }
 
 header p {
     font-size: 1.2em;
 }
 
-#about {
-    background-color: #2b2b2b;
-    color: #e0e0e0; /* Light Gray text */
+section {
+    padding: 60px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #1f1f1f; /* Dark background for sections */
+}
+
+about {
+    background-color: #2b2b2b; /* Slightly lighter background for the About section */
 }
 
 key-components {
-    background-color: #333333;
-    color: #ffcc00; /* Amber text */
+    background-color: #333333; /* Different dark background */
 }
 
-#key-components h3 {
-    color: #e0e0e0; /* Light Gray for sub-section headings */
+integration {
+    background-color: #242424; /* Different dark background */
 }
 
-#integration {
-    background-color: #242424;
-    color: #8ac6d1; /* Light Cyan text */
+achievements {
+    background-color: #292929; /* Different dark background */
 }
 
-#achievements {
-    background-color: #292929;
-    color: #f39c12; /* Golden Yellow text */
-}
-
-#unique-features {
-    background-color: #1f1f1f;
-    color: #ffcc00; /* Amber text */
+unique-features {
+    background-color: #1f1f1f; /* Different dark background */
 }
 
 footer {
     text-align: center;
     padding: 20px 0;
     background-color: #1a1a1a;
-    color: #8ac6d1; /* Light Cyan for footer text */
+    color: #8ac6d1; /* Cyan for footer text */
 }
 
 footer a {
@@ -74,22 +85,4 @@ a {
 
 a:hover {
     text-decoration: underline; /* Underline on hover */
-}
-
-section {
-    padding: 60px 20px;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-h2 {
-    font-size: 2em;
-    margin-bottom: 20px;
-    color: inherit; /* Use the text color defined for each section */
-}
-
-h3 {
-    font-size: 1.5em;
-    margin-bottom: 15px;
-    color: inherit; /* Use the text color defined for each section */
 }
