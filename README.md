@@ -1,1 +1,1 @@
-# eBuds
+# eBuds landing webpage
