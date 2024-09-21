@@ -3,12 +3,7 @@ body {
     font-family: 'Poppins', sans-serif;
     background-color: #121212;
     line-height: 1.6;
-    color: #e0e0e0;
-    background-image: url('assets/background.jpg'); 
-    background-size: cover; 
-    background-position: center;
-    /* Removing height: 100vh; to let the body grow with content */
-    /* No need for background-attachment: fixed; for normal scrolling */
+    color: #e0e0e0; /* Default text color */
 }
 
 /* Global Text Colors */
