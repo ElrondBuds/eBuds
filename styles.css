@@ -87,20 +87,6 @@ a {
 a:hover {
     text-decoration: underline; /* Underline on hover */
 }
-/* Existing styles... */
-
-/* Separator Styles */
-.separator {
-    text-align: center;
-    margin: 20px 0;
-}
-
-.separator img {
-    max-width: 100%;
-    height: auto;
-}
-
-/* CSS Animation for Separator - Optional if you're using an animated GIF */
 .separator::after {
     content: '';
     position: absolute;
@@ -133,5 +119,3 @@ a:hover {
         height: 30px; 
     }
 }
-
-/* Existing styles continue... */
