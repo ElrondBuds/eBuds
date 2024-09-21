@@ -1,9 +1,11 @@
 body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: #121212;
-    line-height: 1.6;
-    color: #e0e0e0; /* Default text color */
+    /* Other body styles... */
+    background-image: url('assets/background.jpg');
+    background-attachment: fixed; /* This creates the parallax effect */
+    background-size: cover; /* Ensure the image covers the entire viewport */
+    background-position: center;
+    height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
 }
 
 /* Global Text Colors */
