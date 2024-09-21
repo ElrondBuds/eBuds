@@ -94,7 +94,7 @@ a:hover {
     justify-content: center;
     align-items: center;
     margin: 20px 0;
-    background-color: #121212; /* Use the background color of your main sections */
+    background-color: #1e1e1e; /* Use the background color of your main sections */
 }
 .separator img {
     max-width: 100%; /* Ensures the image is responsive */
