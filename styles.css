@@ -87,35 +87,19 @@ a {
 a:hover {
     text-decoration: underline; /* Underline on hover */
 }
-.separator::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 50px; /* Match the separator's height */
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
-    animation: animateSeparator 2s linear infinite;
-    pointer-events: none; /* Allows clicks to pass through to elements below */
-    display: none; /* Display only if you want this effect in addition to or instead of the GIF */
+.separator {
+    text-align: center;
+    margin: 20px 0;
 }
 
-@keyframes animateSeparator {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(100%);
-    }
+.separator img {
+    max-width: 100%;
+    height: auto;
 }
 
-/* Responsive design for separator */
+/* Add responsiveness if necessary */
 @media (max-width: 768px) {
     .separator img {
-        width: 80%;
-    }
-
-    /* Adjust the height for the CSS animated separator */
-    .separator::after {
-        height: 30px; 
+        width: 80%; /* Adjust size for mobile */
     }
 }
