@@ -90,11 +90,11 @@ a:hover {
 
 
 .separator {
-    /* Method 1: Using flexbox for centering */
     display: flex;
-    justify-content: center; /* Horizontal centering */
-    align-items: center; /* Vertical centering if needed */
-    margin: 20px 0; /* Space above and below the separator */
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    background-color: transparent; /* Use the background color of your main sections */
 }
 .separator img {
     max-width: 100%; /* Ensures the image is responsive */
