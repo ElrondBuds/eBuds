@@ -1,75 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
-    <meta name="wb:op" content="097a544e7d7a3c09eaa277b3afcb2893"/>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="wb:op" content="097a544e7d7a3c09eaa277b3afcb2893"/>
     <title>eBuds Project</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f7ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #030014;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark-bg);
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.2), rgba(0, 247, 255, 0.1));
+            z-index: -1;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            z-index: -1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        nav {
+            position: fixed;
+            width: 100%;
+            padding: 1.5rem;
+            background: rgba(3, 0, 20, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        nav a {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover::after {
+            transform: scaleX(1);
+        }
+
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 10px var(--neon-blue));
+        }
+
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
+        }
+
+        section {
+            padding: 8rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .button {
+            font-family: 'Orbitron', sans-serif;
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        footer {
+            background: rgba(3, 0, 20, 0.9);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animated background shapes */
+        .shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s infinite;
+        }
+
+        .shape:nth-child(1) {
+            background: var(--neon-purple);
+            width: 300px;
+            height: 300px;
+            top: 20%;
+            left: 20%;
+        }
+
+        .shape:nth-child(2) {
+            background: var(--neon-blue);
+            width: 250px;
+            height: 250px;
+            top: 60%;
+            right: 20%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 100px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-50px, 50px) rotate(270deg);
+            }
+        }
+    </style>
 </head>
 <body>
-<header>
-    <img src="assets/logo.png" alt="eBuds Logo" class="logo">
-    <h1>Welcome to eBuds</h1>
-    <p>Using Blockchain for a Decentralized Future</p>
-</header>
-
-    <section id="about">
-        <h2>About eBuds</h2>
-        <p>eBuds is a <a href="https://multiversx.com/">MultiversX</a> blockchain project designed to encourage engagement with decentralized finance (DeFi), governance, and NFTs. </br> At its core, eBuds is a Decentralized Autonomous Organization (DAO) that prioritizes transparency, community involvement, and the seamless integration of blockchain technology into everyday life.</p>
-    </section>
-    <section id="key-components">
-        <h2>Key Components of eBuds</h2>
-
-        <h3>DAO Governance</h3>
-        <p>eBuds operates as a fully decentralized autonomous organization on <a href="https://peerme.io/ebudsdac">PeerMe</a>
-, meaning decisions and developments within the ecosystem are made by the community, for the community. Governance is facilitated through NFTs, allowing holders to vote on proposals, influence the direction of the project, and ensure that the platform evolves in line with the community’s needs.</p>
-
-        <h3>EBUD Token</h3>
-        <p>The primary utility token within the eBuds ecosystem. EBUD is designed to be scarce. The token’s primary role is to provide liquidity to its members, fostering growth and active participation in blockchain technology.</p>
-
-        <h3>LUV Token</h3>
-        <p>The LUV token serves as a secondary token within the eBuds ecosystem, with a much bigger supply, initially launched on Jexchange, LUV is designed to complement the EBUD token, offering enhanced security and promoting community engagement through its unique ethos.</p>
-
-        <h3>NFTs</h3>
-        <p>NFTs play a crucial role in the eBuds ecosystem. Not only do they serve as governance tools within the DAO, but they also offer unique staking opportunities that enhance user rewards. The eBuds NFT collection allows holders to stake their NFTs to earn additional rewards in the form of EBUD tokens.</p>
-    </section>
-<section id="integration">
-        <h2>Integration and Expansion</h2>
-        <p>eBuds is integrated across multiple platforms in the blockchain space, including; </br>
-              <a href="https://play.google.com/store/apps/details?id=com.elrond.maiar.wallet&referrer=link_click_id%3D1360711969712665478%26utm_source%3DBranch" target="_blank" rel="noopener noreferrer">xPortal Wallet</a>,
-              <a href="http://xexchange.com" target="_blank" rel="noopener noreferrer">xEchange</a>,
-               <a href="http://jexchange.io/" target="_blank" rel="noopener noreferrer">Jexchange</a>,
-                <a href="https://onedex.app/" target="_blank" rel="noopener noreferrer">Onedex</a>,
-                 <a href="https://app.ashswap.io/swap" target="_blank" rel="noopener noreferrer">Ashswap</a>,
-                  <a href="https://peerme.io/" target="_blank" rel="noopener noreferrer">Peerme</a>,
-                   <a href="https://burnify.app/" target="_blank" rel="noopener noreferrer">Burnify</a>,
-                   <a href="https://xoxno.com/" target="_blank" rel="noopener noreferrer">Xoxno</a>,
-                   <a href="https://eneftor.com/" target="_blank" rel="noopener noreferrer">Eneftor</a>,
-                   <a href="https://flipix.io/" target="_blank" rel="noopener noreferrer">FLIPiX</a> ... and more. These integrations ensure that eBuds remains a dynamic and accessible project, continually expanding its reach and impact within the blockchain ecosystem.</p>
-    </section>
-    <section id="achievements">
-        <h2>Achievements and Future Plans</h2>
-        <p>Since its inception, eBuds has successfully created multiple liquidity pools, cultivated an OG community, and made significant strides in developing its DAO governance model. Moving forward, the project aims to enhance its DeFi offerings, further integrate with other blockchain platforms, and continue pushing the boundaries of what decentralized communities can achieve.</p>
-    </section>
-    <section id="unique-features">
-        <h2>What Sets eBuds Apart?</h2>
+    <div class="gradient-bg"></div>
+    <div class="noise"></div>
+    <nav>
         <ul>
-            <li><strong>Community-Centric Approach:</strong> eBuds is driven by its community, with every major decision and development being guided by the collective input of its members.</li>
-            <li><strong>Innovative Tokenomics:</strong> With a dual-token system (EBUD and LUV), eBuds offers unique opportunities for users to engage with the platform, from providing liquidity to participating in governance.</li>
-            <li><strong>NFT Integration:</strong> Beyond just collectibles, eBuds NFTs are utility-driven, offering real value to holders through governance rights and staking rewards.</li>
-            <li><strong>Wide-Ranging Integration:</strong> By partnering with various platforms, eBuds ensures that its ecosystem remains accessible and valuable across the blockchain landscape.</li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#components">Features</a></li>
+            <li><a href="#integration">Partners</a></li>
+            <li><a href="#achievements">Success</a></li>
         </ul>
-    </section>
-     <section id="links">
-        <h2>Explore More</h2>
-        <a href="https://linktr.ee/elrondbuds" target="_blank" rel="noopener noreferrer">Learn More About Us</a>
-        <a href="https://x.com/eBudsNFT" target="_blank" rel="noopener noreferrer">Follow us on X</a>
+    </nav>
+
+    <header>
+        <div class="shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+        <div class="hero-content">
+            <img src="assets/logo.png" alt="eBuds Logo" class="logo">
+            <h1 data-aos="fade-up">Welcome to eBuds</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Building the Future of Finance Together</p>
+        </div>
+    </header>
+
+    <section id="about" data-aos="fade-up">
+        <div class="glass-card">
+            <h2>About eBuds</h2>
+            <p>eBuds is a community where you have a voice in shaping the future of digital finance. Built on MultiversX technology, we offer a secure platform where every member can participate, vote, and earn rewards. Our focus is on creating a transparent and rewarding experience for everyone.</p>
+        </div>
     </section>
 
-     <footer>
-        <p>&copy; 2024 eBuds Project | <a href="mailto:elrondbuds@gmail.com" rel="noopener noreferrer">Contact Us</a></p>
+    <section id="components">
+        <h2 data-aos="fade-up">What We Offer</h2>
+        <div class="grid-container">
+            <div class="glass-card" data-aos="fade-up">
+                <h3>Community Power</h3>
+                <p>Your voice matters in eBuds. Through our voting system, you can propose and vote on changes that shape our community's future.</p>
+            </div>
+            <div class="glass-card" data-aos="fade-up" data-aos-delay="100">
+                <h3>EBUD Token</h3>
+                <p>Our main token gives you access to exclusive benefits and earning opportunities through active community participation.</p>
+            </div>
+            <div class="glass-card" data-aos="fade-up" data-aos-delay="200">
+                <h3>LUV Token</h3>
+                <p>Our secondary token rewards your loyalty and ongoing engagement with special perks and opportunities.</p>
+            </div>
+            <div class="glass-card" data-aos="fade-up" data-aos-delay="300">
+                <h3>NFT Collection</h3>
+                <p>Unique digital art that brings real benefits: voting rights, rewards, and access to exclusive events.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="integration" data-aos="fade-up">
+        <div class="glass-card">
+            <h2>Where to Find Us</h2>
+            <p>eBuds is available on major crypto platforms, ensuring safe and flexible transactions:</p>
+            <div class="links-grid">
+                <a href="https://play.google.com/store/apps/details?id=com.elrond.maiar.wallet" class="button">xPortal</a>
+                <a href="http://xexchange.com" class="button">xExchange</a>
+                <a href="http://jexchange.io/" class="button">Jexchange</a>
+                <a href="https://onedex.app/" class="button">Onedex</a>
+                <a href="https://app.ashswap.io/swap" class="button">Ashswap</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="achievements" data-aos="fade-up">
+        <div class="glass-card">
+            <h2>Our Success</h2>
+            <p>We've built a thriving community of over 1,000 active members, successfully launched our tokens, and created working reward systems. Our future plans include new member benefits and expanding to more partner platforms.</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="links-grid">
+            <a href="https://linktr.ee/elrondbuds" class="button">Learn More</a>
+            <a href="https://x.com/eBudsNFT" class="button">Follow on X</a>
+            <a href="mailto:elrondbuds@gmail.com" class="button">Contact Us</a>
+        </div>
+        <p style="margin-top: 2rem;">&copy; 2024 eBuds Project</p>
     </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+    </script>
 </body>
 </html>
