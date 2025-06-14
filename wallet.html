@@ -333,8 +333,8 @@
         return `${address.substring(0, 7)}...${address.substring(address.length - 5)}`;
     };
 
-    const displayData = (address, nfts, tokens, accountData, priceMap, decimalsMap) => {
-        console.log("Displaying data with price map:", priceMap, "and decimals map:", decimalsMap);
+    const displayData = (address, nfts, tokens, accountData, priceMap) => {
+        console.log("Displaying data with final price map:", priceMap);
         const votePower = nfts.filter(nft => nft.collection === ebudsCollectionId).length;
         const currentLang = languageSelector ? languageSelector.value : 'en';
         const t = translations[currentLang] || translations.en;
@@ -362,60 +362,13 @@
 
         html += `<div class="assets-title">${t.assets_title}</div><div class="assets-grid">`;
 
-        const allTokensForDisplay = [];
-        const fixedTokensOrder = ['EBUD-d29cce', 'LUV-310136', 'GREEN-1c62ca', 'HIT-3f109b'];
+        // Filter tokens that have valid decimals before display
+        const displayableTokens = tokens.filter(token => typeof token.decimals === 'number');
 
-        fixedTokensOrder.forEach(fixedId => {
-            let tokenInfo = tokens.find(t => t.identifier === fixedId);
-            
-            if (fixedId === 'EBUD-d29cce') {
-                allTokensForDisplay.push({
-                    identifier: fixedId,
-                    name: t.ebud_token_label,
-                    balance: tokenInfo ? tokenInfo.balance : '0',
-                    assets: {
-                        svgUrl: 'https://tools.multiversx.com/assets-cdn/tokens/EBUD-d29cce/icon.svg'
-                    },
-                    iconType: 'home'
-                });
-            } else if (tokenInfo) {
-                allTokensForDisplay.push({
-                    identifier: fixedId,
-                    name: fixedId === 'LUV-310136' ? t.luv_token_label : (fixedId === 'GREEN-1c62ca' ? t.green_token_label : t.hit_token_label),
-                    balance: tokenInfo.balance,
-                    assets: tokenInfo.assets,
-                    iconType: 'favorite'
-                });
-            }
-        });
-        const remainingTokens = tokens.filter(token => {
-            const tokenDecimals = decimalsMap[token.identifier];
-            return token.identifier !== 'EGLD' && 
-                   !fixedTokensOrder.includes(token.identifier) && 
-                   typeof tokenDecimals === 'number' &&
-                   parseFloat(token.balance) / (10 ** tokenDecimals) > 0;
-        }).sort((a, b) => (a.name || a.identifier).localeCompare(b.name || b.identifier));
-
-        allTokensForDisplay.push(...remainingTokens);
-
-
-        if (allTokensForDisplay.length > 0) {
+        if (displayableTokens.length > 0) {
             html += `<div class="asset-column"><h4 class="asset-column-title">${t.tokens_section_title}</h4><ul class="token-list">`;
-            allTokensForDisplay.forEach(token => {
-                const tokenDecimals = decimalsMap[token.identifier];
-                
-                if (typeof tokenDecimals !== 'number' || tokenDecimals < 0) {
-                    console.warn("Skipping token with invalid decimals:", token.identifier);
-                    return;
-                }
-                
-                const balance = parseFloat(token.balance) / (10 ** tokenDecimals);
-
-                if (isNaN(balance)) {
-                  console.warn(`Could not parse balance for token:`, token);
-                  return;
-                }
-
+            displayableTokens.forEach(token => {
+                const balance = parseFloat(token.balance) / (10 ** token.decimals);
                 const price = priceMap[token.identifier] || 0;
                 const value = balance * price;
                 totalValue += value;
@@ -440,7 +393,7 @@
                                     ${specialIcon}
                                 </div>
                                 <div class="asset-balance">
-                                    <span>${balance.toFixed(tokenDecimals > 4 ? 4 : tokenDecimals)}</span>
+                                    <span>${balance.toFixed(token.decimals > 4 ? 4 : token.decimals)}</span>
                                 </div>
                                 <div class="asset-value">
                                   <span>${t.token_price_label} ${price > 0 ? '$' + price.toFixed(6) : 'N/A'}</span>
@@ -490,7 +443,6 @@
             html += `<div class="asset-column"><h4 class="asset-column-title">${t.nfts_section_title}</h4><ul class="nft-collections-list">`;
             allNftsForDisplay.forEach(col => {
                 const logo = col.logoUrl;
-                const sanitizedCollectionId = col.collectionId.replace(/[^a-zA-Z0-9]/g, '');
                 
                 let specialIcon = '';
                 if (col.iconType === 'home') {
@@ -504,7 +456,7 @@
                                      onerror="this.parentElement.innerHTML = \`<div class='asset-placeholder-logo'>${col.collectionName.substring(0, 2).toUpperCase()}</div>\`;">
                             </div>
                             <div class="asset-info">
-                                <div class="asset-name" id="nft-name-${sanitizedCollectionId}">
+                                <div class="asset-name">
                                     <a href="https://explorer.multiversx.com/collections/${col.collectionId}" target="_blank" rel="noopener noreferrer">${col.collectionName} ↗</a>
                                     ${specialIcon}
                                 </div>
@@ -536,10 +488,10 @@
           
           const [accountRes, tokensRes, nftsRes, pricesRes, allPairsRes] = await Promise.all([
             fetch(`${restApiBase}/accounts/${address}`),
-            fetch(`${restApiBase}/accounts/${address}/tokens?size=200`), // Increased size
+            fetch(`${restApiBase}/accounts/${address}/tokens?size=500`),
             fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
             fetch(`${xExchangeApiBase}/tokens`),
-            fetch(`${xExchangeApiBase}/pairs?size=2000`), // Fetch all pairs
+            fetch(`${xExchangeApiBase}/pairs?size=2000`),
           ]);
           
           const currentLang = languageSelector ? languageSelector.value : 'en';
@@ -552,20 +504,11 @@
           if (!allPairsRes.ok) console.warn(`Could not fetch xExchange pairs (status: ${allPairsRes.status})`);
           
           const accountData = await accountRes.json();
-          let tokensData = await tokensRes.json();
+          const tokensData = await tokensRes.json();
           const nftsData = await nftsRes.json();
           const pricesData = await pricesRes.json();
           const allPairsData = allPairsRes.ok ? await allPairsRes.json() : [];
           
-          const tokenIdentifiers = tokensData.map(t => t.identifier).join(',');
-          const tokenDetailsRes = await fetch(`${restApiBase}/tokens?identifiers=${tokenIdentifiers}`);
-          const tokenDetailsData = await tokenDetailsRes.json();
-          
-          const decimalsMap = tokenDetailsData.reduce((acc, token) => {
-              acc[token.identifier] = token.decimals;
-              return acc;
-          }, {});
-
           const priceMap = {};
           if (Array.isArray(pricesData)) {
               for (const token of pricesData) {
@@ -574,7 +517,7 @@
                   }
               }
           }
-          
+
           const tokensToPrice = tokensData.filter(t => !priceMap[t.identifier]);
           if(tokensToPrice.length > 0) {
               const wegldPrice = priceMap['WEGLD-bd4d79'] || 0;
@@ -583,9 +526,9 @@
                       const token1Id = pair.baseId;
                       const token2Id = pair.quoteId;
 
-                      if(!priceMap[token1Id] && token2Id === 'WEGLD-bd4d79' && decimalsMap[token1Id] !== undefined) {
+                      if(!priceMap[token1Id] && token2Id === 'WEGLD-bd4d79') {
                           priceMap[token1Id] = pair.price * wegldPrice;
-                      } else if (!priceMap[token2Id] && token1Id === 'WEGLD-bd4d79' && decimalsMap[token2Id] !== undefined) {
+                      } else if (!priceMap[token2Id] && token1Id === 'WEGLD-bd4d79') {
                           if (pair.price > 0) {
                             priceMap[token2Id] = (1 / pair.price) * wegldPrice;
                           }
@@ -594,14 +537,8 @@
               }
           }
 
-          const filteredTokens = tokensData.filter(t => {
-            const tokenDecimals = decimalsMap[t.identifier];
-            if (typeof tokenDecimals !== 'number') return false;
-            return parseFloat(t.balance) / (10 ** tokenDecimals) > 0 || t.identifier === 'EGLD'
-          });
-          
           hideStatus();
-          displayData(address, nftsData, filteredTokens, accountData, priceMap, decimalsMap);
+          displayData(address, nftsData, tokensData, accountData, priceMap, tokensData.reduce((acc, t) => {acc[t.identifier] = t.decimals; return acc;}, {}));
 
         } catch (e) {
           hideStatus();
