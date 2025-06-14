@@ -546,6 +546,26 @@
                   }
               }
           }
+          
+          const tokensToPrice = tokensData.filter(t => !priceMap[t.identifier]);
+          if(tokensToPrice.length > 0) {
+              const wegldPrice = priceMap['WEGLD-bd4d79'] || 0;
+              if (wegldPrice > 0) {
+                  const pairPromises = tokensToPrice.map(token => 
+                      fetch(`${xExchangeApiBase}/pairs/${token.identifier}/WEGLD-bd4d79`)
+                        .then(res => res.ok ? res.json() : null)
+                        .catch(() => null)
+                  );
+                  const pairResults = await Promise.all(pairPromises);
+
+                  pairResults.forEach((pair, index) => {
+                      if(pair && pair.price) {
+                          const tokenIdentifier = tokensToPrice[index].identifier;
+                          priceMap[tokenIdentifier] = pair.price * wegldPrice;
+                      }
+                  });
+              }
+          }
 
           const filteredTokens = tokensData.filter(t => parseFloat(t.balance) / (10 ** (t.decimals || 0)) > 0 || t.identifier === 'EGLD');
           
