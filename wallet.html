@@ -333,8 +333,8 @@
         return `${address.substring(0, 7)}...${address.substring(address.length - 5)}`;
     };
 
-    const displayData = (address, nfts, tokens, accountData, priceMap) => {
-        console.log("Displaying data with price map:", priceMap);
+    const displayData = (address, nfts, tokens, accountData, priceMap, decimalsMap) => {
+        console.log("Displaying data with price map:", priceMap, "and decimals map:", decimalsMap);
         const votePower = nfts.filter(nft => nft.collection === ebudsCollectionId).length;
         const currentLang = languageSelector ? languageSelector.value : 'en';
         const t = translations[currentLang] || translations.en;
@@ -373,7 +373,6 @@
                     identifier: fixedId,
                     name: t.ebud_token_label,
                     balance: tokenInfo ? tokenInfo.balance : '0',
-                    decimals: tokenInfo ? tokenInfo.decimals : 18,
                     assets: {
                         svgUrl: 'https://tools.multiversx.com/assets-cdn/tokens/EBUD-d29cce/icon.svg'
                     },
@@ -384,15 +383,18 @@
                     identifier: fixedId,
                     name: fixedId === 'LUV-310136' ? t.luv_token_label : (fixedId === 'GREEN-1c62ca' ? t.green_token_label : t.hit_token_label),
                     balance: tokenInfo.balance,
-                    decimals: tokenInfo.decimals,
                     assets: tokenInfo.assets,
                     iconType: 'favorite'
                 });
             }
         });
-        const remainingTokens = tokens.filter(token =>
-            token.identifier !== 'EGLD' && !fixedTokensOrder.includes(token.identifier) && parseFloat(token.balance) / (10 ** (token.decimals || 0)) > 0
-        ).sort((a, b) => (a.name || a.identifier).localeCompare(b.name || b.identifier));
+        const remainingTokens = tokens.filter(token => {
+            const tokenDecimals = decimalsMap[token.identifier];
+            return token.identifier !== 'EGLD' && 
+                   !fixedTokensOrder.includes(token.identifier) && 
+                   typeof tokenDecimals === 'number' &&
+                   parseFloat(token.balance) / (10 ** tokenDecimals) > 0;
+        }).sort((a, b) => (a.name || a.identifier).localeCompare(b.name || b.identifier));
 
         allTokensForDisplay.push(...remainingTokens);
 
@@ -400,12 +402,18 @@
         if (allTokensForDisplay.length > 0) {
             html += `<div class="asset-column"><h4 class="asset-column-title">${t.tokens_section_title}</h4><ul class="token-list">`;
             allTokensForDisplay.forEach(token => {
-                const tokenDecimals = (typeof token.decimals === 'number' && token.decimals >= 0) ? token.decimals : 0;
+                const tokenDecimals = decimalsMap[token.identifier];
+                
+                if (typeof tokenDecimals !== 'number' || tokenDecimals < 0) {
+                    console.warn("Skipping token with invalid decimals:", token.identifier);
+                    return;
+                }
+                
                 const balance = parseFloat(token.balance) / (10 ** tokenDecimals);
 
                 if (isNaN(balance)) {
                   console.warn(`Could not parse balance for token:`, token);
-                  return; // Skip this iteration
+                  return;
                 }
 
                 const price = priceMap[token.identifier] || 0;
@@ -528,10 +536,10 @@
           
           const [accountRes, tokensRes, nftsRes, pricesRes, allPairsRes] = await Promise.all([
             fetch(`${restApiBase}/accounts/${address}`),
-            fetch(`${restApiBase}/accounts/${address}/tokens?size=100`),
+            fetch(`${restApiBase}/accounts/${address}/tokens?size=200`), // Increased size
             fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
             fetch(`${xExchangeApiBase}/tokens`),
-            fetch(`${xExchangeApiBase}/pairs?size=1000`), // Fetch all pairs
+            fetch(`${xExchangeApiBase}/pairs?size=2000`), // Fetch all pairs
           ]);
           
           const currentLang = languageSelector ? languageSelector.value : 'en';
@@ -544,11 +552,20 @@
           if (!allPairsRes.ok) console.warn(`Could not fetch xExchange pairs (status: ${allPairsRes.status})`);
           
           const accountData = await accountRes.json();
-          const tokensData = await tokensRes.json();
+          let tokensData = await tokensRes.json();
           const nftsData = await nftsRes.json();
           const pricesData = await pricesRes.json();
           const allPairsData = allPairsRes.ok ? await allPairsRes.json() : [];
           
+          const tokenIdentifiers = tokensData.map(t => t.identifier).join(',');
+          const tokenDetailsRes = await fetch(`${restApiBase}/tokens?identifiers=${tokenIdentifiers}`);
+          const tokenDetailsData = await tokenDetailsRes.json();
+          
+          const decimalsMap = tokenDetailsData.reduce((acc, token) => {
+              acc[token.identifier] = token.decimals;
+              return acc;
+          }, {});
+
           const priceMap = {};
           if (Array.isArray(pricesData)) {
               for (const token of pricesData) {
@@ -562,18 +579,13 @@
           if(tokensToPrice.length > 0) {
               const wegldPrice = priceMap['WEGLD-bd4d79'] || 0;
               if (wegldPrice > 0) {
-                  const tokenDetailsMap = tokensData.reduce((acc, token) => {
-                      acc[token.identifier] = token;
-                      return acc;
-                  }, {});
-
                   for(const pair of allPairsData) {
                       const token1Id = pair.baseId;
                       const token2Id = pair.quoteId;
 
-                      if(!priceMap[token1Id] && token2Id === 'WEGLD-bd4d79' && tokenDetailsMap[token1Id]) {
+                      if(!priceMap[token1Id] && token2Id === 'WEGLD-bd4d79' && decimalsMap[token1Id] !== undefined) {
                           priceMap[token1Id] = pair.price * wegldPrice;
-                      } else if (!priceMap[token2Id] && token1Id === 'WEGLD-bd4d79' && tokenDetailsMap[token2Id]) {
+                      } else if (!priceMap[token2Id] && token1Id === 'WEGLD-bd4d79' && decimalsMap[token2Id] !== undefined) {
                           if (pair.price > 0) {
                             priceMap[token2Id] = (1 / pair.price) * wegldPrice;
                           }
@@ -582,10 +594,14 @@
               }
           }
 
-          const filteredTokens = tokensData.filter(t => parseFloat(t.balance) / (10 ** (t.decimals || 0)) > 0 || t.identifier === 'EGLD');
+          const filteredTokens = tokensData.filter(t => {
+            const tokenDecimals = decimalsMap[t.identifier];
+            if (typeof tokenDecimals !== 'number') return false;
+            return parseFloat(t.balance) / (10 ** tokenDecimals) > 0 || t.identifier === 'EGLD'
+          });
           
           hideStatus();
-          displayData(address, nftsData, filteredTokens, accountData, priceMap);
+          displayData(address, nftsData, filteredTokens, accountData, priceMap, decimalsMap);
 
         } catch (e) {
           hideStatus();
