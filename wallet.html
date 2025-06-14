@@ -400,8 +400,14 @@
         if (allTokensForDisplay.length > 0) {
             html += `<div class="asset-column"><h4 class="asset-column-title">${t.tokens_section_title}</h4><ul class="token-list">`;
             allTokensForDisplay.forEach(token => {
-                const logoUrl = resolveIpfsUrl(token.assets?.svgUrl || token.assets?.pngUrl || '');
-                const balance = token.balance / (10 ** (token.decimals || 0));
+                const tokenDecimals = (typeof token.decimals === 'number' && token.decimals >= 0) ? token.decimals : 0;
+                const balance = parseFloat(token.balance) / (10 ** tokenDecimals);
+
+                if (isNaN(balance)) {
+                  console.warn(`Could not parse balance for token:`, token);
+                  return; // Skip this iteration
+                }
+
                 const price = priceMap[token.identifier] || 0;
                 const value = balance * price;
                 totalValue += value;
@@ -416,7 +422,7 @@
 
                 html += `<li>
                             <div class="asset-logo-container">
-                                <img src="${logoUrl || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='}"
+                                <img src="${resolveIpfsUrl(token.assets?.svgUrl || token.assets?.pngUrl || '')}"
                                      class="asset-logo" alt="${token.name || token.identifier}"
                                      onerror="this.parentElement.innerHTML = '<div class=&quot;asset-placeholder-logo&quot;>${(token.name || token.identifier).substring(0, 2).toUpperCase()}</div>';">
                             </div>
@@ -426,7 +432,7 @@
                                     ${specialIcon}
                                 </div>
                                 <div class="asset-balance">
-                                    <span>${balance.toFixed(token.decimals > 4 ? 4 : token.decimals || 0)}</span>
+                                    <span>${balance.toFixed(tokenDecimals > 4 ? 4 : tokenDecimals)}</span>
                                 </div>
                                 <div class="asset-value">
                                   <span>${t.token_price_label} ${price > 0 ? '$' + price.toFixed(6) : 'N/A'}</span>
@@ -568,7 +574,9 @@
                       if(!priceMap[token1Id] && token2Id === 'WEGLD-bd4d79' && tokenDetailsMap[token1Id]) {
                           priceMap[token1Id] = pair.price * wegldPrice;
                       } else if (!priceMap[token2Id] && token1Id === 'WEGLD-bd4d79' && tokenDetailsMap[token2Id]) {
-                          priceMap[token2Id] = (1 / pair.price) * wegldPrice;
+                          if (pair.price > 0) {
+                            priceMap[token2Id] = (1 / pair.price) * wegldPrice;
+                          }
                       }
                   }
               }
