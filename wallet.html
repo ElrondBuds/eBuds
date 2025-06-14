@@ -149,6 +149,7 @@
             api_error_tokens: "Failed to fetch tokens data",
             api_error_nfts: "Failed to fetch NFTs data",
             api_error_prices: "Failed to fetch price data",
+            api_error_pools: "Failed to fetch pool data",
             elven_init_error: "Error initializing ElvenJS",
             generating_qr: "Generating QR code...",
             qr_error: "Error generating QR code",
@@ -199,6 +200,7 @@
             api_error_tokens: "Nu s-au putut prelua datele tokenilor",
             api_error_nfts: "Nu s-au putut prelua datele NFT-urilor",
             api_error_prices: "Nu s-au putut prelua prețurile",
+            api_error_pools: "Nu s-au putut prelua datele pool-urilor",
             elven_init_error: "Eroare la inițializarea ElvenJS",
             generating_qr: "Se generează codul QR...",
             qr_error: "Eroare la generarea codului QR",
@@ -518,11 +520,12 @@
             throw new Error(translations[languageSelector.value]?.invalid_address || translations.en.invalid_address);
           }
           
-          const [accountRes, tokensRes, nftsRes, pricesRes] = await Promise.all([
+          const [accountRes, tokensRes, nftsRes, pricesRes, allPairsRes] = await Promise.all([
             fetch(`${restApiBase}/accounts/${address}`),
             fetch(`${restApiBase}/accounts/${address}/tokens?size=100`),
             fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
             fetch(`${xExchangeApiBase}/tokens`),
+            fetch(`${xExchangeApiBase}/pairs?size=1000`), // Fetch all pairs
           ]);
           
           const currentLang = languageSelector ? languageSelector.value : 'en';
@@ -532,11 +535,13 @@
           if (!tokensRes.ok) throw new Error(`${t.api_error_tokens} (status: ${tokensRes.status})`);
           if (!nftsRes.ok) throw new Error(`${t.api_error_nfts} (status: ${nftsRes.status})`);
           if (!pricesRes.ok) throw new Error(`${t.api_error_prices} (status: ${pricesRes.status})`);
+          if (!allPairsRes.ok) console.warn(`Could not fetch xExchange pairs (status: ${allPairsRes.status})`);
           
           const accountData = await accountRes.json();
           const tokensData = await tokensRes.json();
           const nftsData = await nftsRes.json();
           const pricesData = await pricesRes.json();
+          const allPairsData = allPairsRes.ok ? await allPairsRes.json() : [];
           
           const priceMap = {};
           if (Array.isArray(pricesData)) {
@@ -551,19 +556,21 @@
           if(tokensToPrice.length > 0) {
               const wegldPrice = priceMap['WEGLD-bd4d79'] || 0;
               if (wegldPrice > 0) {
-                  const pairPromises = tokensToPrice.map(token => 
-                      fetch(`${xExchangeApiBase}/pairs/${token.identifier}/WEGLD-bd4d79`)
-                        .then(res => res.ok ? res.json() : null)
-                        .catch(() => null)
-                  );
-                  const pairResults = await Promise.all(pairPromises);
+                  const tokenDetailsMap = tokensData.reduce((acc, token) => {
+                      acc[token.identifier] = token;
+                      return acc;
+                  }, {});
 
-                  pairResults.forEach((pair, index) => {
-                      if(pair && pair.price) {
-                          const tokenIdentifier = tokensToPrice[index].identifier;
-                          priceMap[tokenIdentifier] = pair.price * wegldPrice;
+                  for(const pair of allPairsData) {
+                      const token1Id = pair.baseId;
+                      const token2Id = pair.quoteId;
+
+                      if(!priceMap[token1Id] && token2Id === 'WEGLD-bd4d79' && tokenDetailsMap[token1Id]) {
+                          priceMap[token1Id] = pair.price * wegldPrice;
+                      } else if (!priceMap[token2Id] && token1Id === 'WEGLD-bd4d79' && tokenDetailsMap[token2Id]) {
+                          priceMap[token2Id] = (1 / pair.price) * wegldPrice;
                       }
-                  });
+                  }
               }
           }
 
