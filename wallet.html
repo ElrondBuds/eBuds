@@ -340,7 +340,7 @@
         const truncatedAddr = truncateAddress(address);
         
         const egldBalance = accountData?.balance ? parseFloat(accountData.balance) / (10 ** 18) : 0;
-        const egldPrice = priceMap['WEGLD-bd4d79'] || 0; // CORRECTED: Use WEGLD identifier
+        const egldPrice = priceMap['WEGLD-bd4d79'] || 0;
         console.log(`EGLD Balance: ${egldBalance}, EGLD Price: ${egldPrice}`); // Log for debugging
         let totalValue = egldBalance * egldPrice;
 
@@ -538,10 +538,18 @@
           const nftsData = await nftsRes.json();
           const pricesData = await pricesRes.json();
           
-          const priceMap = pricesData.reduce((acc, token) => {
-            acc[token.identifier] = token.price;
-            return acc;
-          }, {});
+          const priceMap = {};
+          if (Array.isArray(pricesData)) {
+              for (const token of pricesData) {
+                  if (token && token.identifier) {
+                      priceMap[token.identifier] = token.price;
+                  } else {
+                      console.warn("Skipping invalid token object from price API:", token);
+                  }
+              }
+          } else {
+              console.error("Price data from API is not an array:", pricesData);
+          }
 
           const filteredTokens = tokensData.filter(t => parseFloat(t.balance) / (10 ** (t.decimals || 0)) > 0 || t.identifier === 'EGLD');
           
