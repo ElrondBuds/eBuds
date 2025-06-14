@@ -37,6 +37,80 @@
         cursor: help;
         font-style: normal;
     }
+
+    /* Price display styles */
+    .price-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 0.9em;
+        color: #888;
+    }
+
+    .price-usd {
+        color: #00ff9d;
+        font-weight: 500;
+    }
+
+    .price-change {
+        font-size: 0.8em;
+        font-weight: 500;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-top: 2px;
+    }
+
+    .price-change.positive {
+        color: #4caf50;
+        background-color: rgba(76, 175, 80, 0.1);
+    }
+
+    .price-change.negative {
+        color: #f44336;
+        background-color: rgba(244, 67, 54, 0.1);
+    }
+
+    .price-loading {
+        color: #666;
+        font-style: italic;
+    }
+
+    .price-error {
+        color: #888;
+        font-size: 0.8em;
+    }
+
+    .asset-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .asset-details {
+        flex: 1;
+    }
+
+    .total-value {
+        background: linear-gradient(135deg, rgba(0, 255, 157, 0.1), rgba(0, 255, 157, 0.05));
+        border: 1px solid rgba(0, 255, 157, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 15px 0;
+        text-align: center;
+    }
+
+    .total-value h3 {
+        margin: 0 0 10px 0;
+        color: #00ff9d;
+        font-size: 1.2em;
+    }
+
+    .total-value .amount {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -132,7 +206,6 @@
             back_button: "Back",
             back_to_main_site: "← Back to Main Site",
             wallet_info_title: "Wallet Information",
-            total_value_label: "Total Estimated Value:",
             address_label: "Address:",
             egld_balance_label: "EGLD Balance:",
             vote_power_label: "Voting Power:",
@@ -145,10 +218,6 @@
             loading_wallet_data: "Loading wallet data...",
             invalid_address: "Invalid wallet address",
             blockchain_error: "Error fetching data from blockchain",
-            api_error_account: "Failed to fetch account data",
-            api_error_tokens: "Failed to fetch tokens data",
-            api_error_nfts: "Failed to fetch NFTs data",
-            api_error_prices: "Failed to fetch price data",
             elven_init_error: "Error initializing ElvenJS",
             generating_qr: "Generating QR code...",
             qr_error: "Error generating QR code",
@@ -163,8 +232,9 @@
             green_token_label: "GREEN Token",
             hit_token_label: "HIT Token",
             bud_collection_label: "eBuds Collection",
-            token_price_label: "Price:",
-            token_value_label: "Value:"
+            total_portfolio_value: "Total Portfolio Value",
+            loading_prices: "Loading prices...",
+            price_unavailable: "Price unavailable",
         },
         ro: {
             wallet_page_title: "Portofel eBuds",
@@ -182,7 +252,6 @@
             back_button: "Înapoi",
             back_to_main_site: "← Înapoi la Site-ul Principal",
             wallet_info_title: "Informații Portofel",
-            total_value_label: "Valoare Totală Est.",
             address_label: "Adresă:",
             egld_balance_label: "Sold EGLD:",
             vote_power_label: "Putere de Vot:",
@@ -195,10 +264,6 @@
             loading_wallet_data: "Se încarcă datele portofelului...",
             invalid_address: "Adresă portofel invalidă",
             blockchain_error: "Eroare la obținerea datelor de pe blockchain",
-            api_error_account: "Nu s-au putut prelua datele contului",
-            api_error_tokens: "Nu s-au putut prelua datele tokenilor",
-            api_error_nfts: "Nu s-au putut prelua datele NFT-urilor",
-            api_error_prices: "Nu s-au putut prelua prețurile",
             elven_init_error: "Eroare la inițializarea ElvenJS",
             generating_qr: "Se generează codul QR...",
             qr_error: "Eroare la generarea codului QR",
@@ -213,9 +278,97 @@
             green_token_label: "Token GREEN",
             hit_token_label: "Token HIT",
             bud_collection_label: "Colecția eBuds",
-            token_price_label: "Preț:",
-            token_value_label: "Valoare:"
+            total_portfolio_value: "Valoarea Totală a Portofoliului",
+            loading_prices: "Se încarcă prețurile...",
+            price_unavailable: "Preț indisponibil",
         },
+    };
+
+    // Price fetching functionality
+    const priceCache = new Map();
+    const PRICE_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+    const tokenIdMapping = {
+        'EGLD': 'multiversx-egld',
+        'EBUD-d29cce': 'ebuds',
+        'LUV-310136': 'luv-token',
+        'GREEN-1c62ca': 'green-token',
+        'HIT-3f109b': 'hit-token'
+    };
+
+    const fetchTokenPrices = async (tokenIds) => {
+        const now = Date.now();
+        const tokensToFetch = [];
+        const cachedPrices = {};
+
+        // Check cache first
+        for (const tokenId of tokenIds) {
+            const cacheKey = tokenIdMapping[tokenId] || tokenId.toLowerCase();
+            const cached = priceCache.get(cacheKey);
+            
+            if (cached && (now - cached.timestamp) < PRICE_CACHE_DURATION) {
+                cachedPrices[tokenId] = cached.data;
+            } else {
+                tokensToFetch.push(cacheKey);
+            }
+        }
+
+        // Fetch missing prices
+        if (tokensToFetch.length > 0) {
+            try {
+                // Use CoinGecko API with fallback to a proxy if needed
+                const apiUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${tokensToFetch.join(',')}&vs_currencies=usd&include_24hr_change=true`;
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Cache the results
+                Object.entries(data).forEach(([coinId, priceData]) => {
+                    priceCache.set(coinId, {
+                        data: priceData,
+                        timestamp: now
+                    });
+                    
+                    // Map back to token ID
+                    const tokenId = Object.keys(tokenIdMapping).find(key => tokenIdMapping[key] === coinId) || coinId;
+                    cachedPrices[tokenId] = priceData;
+                });
+                
+            } catch (error) {
+                console.warn('Failed to fetch prices from CoinGecko:', error);
+                // Return empty prices for failed fetches
+                tokensToFetch.forEach(coinId => {
+                    const tokenId = Object.keys(tokenIdMapping).find(key => tokenIdMapping[key] === coinId) || coinId;
+                    cachedPrices[tokenId] = null;
+                });
+            }
+        }
+
+        return cachedPrices;
+    };
+
+    const formatPrice = (price) => {
+        if (price === null || price === undefined) return null;
+        
+        if (price < 0.01) {
+            return price.toFixed(6);
+        } else if (price < 1) {
+            return price.toFixed(4);
+        } else {
+            return price.toFixed(2);
+        }
+    };
+
+    const formatPriceChange = (change) => {
+        if (change === null || change === undefined) return null;
+        
+        const formatted = Math.abs(change).toFixed(2);
+        return change >= 0 ? `+${formatted}%` : `-${formatted}%`;
     };
 
     function translatePage(language) {
@@ -243,8 +396,8 @@
       const manualAddressInput = document.getElementById('manualAddressInput');
       const languageSelector = document.getElementById('language-selector-wallet');
       
+      const proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=';
       const restApiBase = 'https://api.multiversx.com';
-      const xExchangeApiBase = 'https://api.multiversx.com/mex';
       
       const ebudsCollectionId = 'BUD-3ee0cf';
       let isManualConnection = false;
@@ -331,27 +484,19 @@
         return `${address.substring(0, 7)}...${address.substring(address.length - 5)}`;
     };
 
-    const displayData = (address, nfts, tokens, accountData, priceMap) => {
-        console.log("Displaying data with price map:", priceMap); // Log for debugging
+    const displayData = async (address, nfts, tokens, accountData) => {
         const votePower = nfts.filter(nft => nft.collection === ebudsCollectionId).length;
         const currentLang = languageSelector ? languageSelector.value : 'en';
         const t = translations[currentLang] || translations.en;
         
         const truncatedAddr = truncateAddress(address);
         
-        const egldBalance = accountData?.balance ? parseFloat(accountData.balance) / (10 ** 18) : 0;
-        const egldPrice = priceMap['WEGLD-bd4d79'] || 0;
-        console.log(`EGLD Balance: ${egldBalance}, EGLD Price: ${egldPrice}`); // Log for debugging
-        let totalValue = egldBalance * egldPrice;
+        const egldBalanceValue = accountData && accountData.balance ? (parseFloat(accountData.balance) / (10 ** 18)).toFixed(4) : (0).toFixed(4);
 
         let html = `
           <h2>${t.wallet_info_title}</h2>
-          <div class="total-value-card">
-            <strong>${t.total_value_label}</strong>
-            <span id="total-portfolio-value">$0.00</span>
-          </div>
           <p><strong>${t.address_label}</strong> <a href="https://explorer.multiversx.com/accounts/${address}" target="_blank" rel="noopener noreferrer" title="${address}">${truncatedAddr} ↗</a></p>
-          <p><strong>${t.egld_balance_label}</strong> ${egldBalance.toFixed(4)} EGLD</p> 
+          <p><strong>${t.egld_balance_label}</strong> ${egldBalanceValue} EGLD</p> 
           <div class="vote-power-card">
             <strong>🏆 ${t.vote_power_label} ${votePower}</strong>
             <br><small>${t.vote_power_desc}</small>
@@ -361,9 +506,21 @@
         html += `<div class="assets-title">${t.assets_title}</div><div class="assets-grid">`;
 
         const allTokensForDisplay = [];
-        const fixedTokensOrder = ['EBUD-d29cce', 'LUV-310136', 'GREEN-1c62ca', 'HIT-3f109b'];
+        const fixedTokensOrder = ['EGLD', 'EBUD-d29cce', 'LUV-310136', 'GREEN-1c62ca', 'HIT-3f109b'];
 
-        fixedTokensOrder.forEach(fixedId => {
+        // Add EGLD first
+        allTokensForDisplay.push({
+            identifier: 'EGLD',
+            name: 'MultiversX',
+            balance: accountData.balance || '0',
+            decimals: 18,
+            assets: {
+                svgUrl: 'https://tools.multiversx.com/assets-cdn/tokens/EGLD/icon.svg'
+            },
+            iconType: 'native'
+        });
+
+        fixedTokensOrder.slice(1).forEach(fixedId => {
             let tokenInfo = tokens.find(t => t.identifier === fixedId);
             
             if (fixedId === 'EBUD-d29cce') {
@@ -371,7 +528,7 @@
                     identifier: fixedId,
                     name: t.ebud_token_label,
                     balance: tokenInfo ? tokenInfo.balance : '0',
-                    decimals: tokenInfo ? tokenInfo.decimals : 18,
+                    decimals: tokenInfo ? tokenInfo.decimals : 0,
                     assets: {
                         svgUrl: 'https://tools.multiversx.com/assets-cdn/tokens/EBUD-d29cce/icon.svg'
                     },
@@ -388,28 +545,52 @@
                 });
             }
         });
+
         const remainingTokens = tokens.filter(token =>
             token.identifier !== 'EGLD' && !fixedTokensOrder.includes(token.identifier) && parseFloat(token.balance) / (10 ** (token.decimals || 0)) > 0
         ).sort((a, b) => (a.name || a.identifier).localeCompare(b.name || b.identifier));
 
-        allTokensForDisplay.push(...remainingTokens);
+        remainingTokens.forEach(token => allTokensForDisplay.push(token));
 
+        // Fetch prices for all tokens
+        const tokenIds = allTokensForDisplay.map(token => token.identifier);
+        const prices = await fetchTokenPrices(tokenIds);
+
+        let totalPortfolioValue = 0;
 
         if (allTokensForDisplay.length > 0) {
-            html += `<div class="asset-column"><h4 class="asset-column-title">${t.tokens_section_title}</h4><ul class="token-list">`;
+            html += `<div class="asset-column"><h4>${t.tokens_section_title}</h4><ul class="token-list">`;
             allTokensForDisplay.forEach(token => {
                 const logoUrl = resolveIpfsUrl(token.assets?.svgUrl || token.assets?.pngUrl || '');
-                const balance = token.balance / (10 ** (token.decimals || 0));
-                const price = priceMap[token.identifier] || 0;
-                const value = balance * price;
-                totalValue += value;
-                 console.log(`Token: ${token.identifier}, Balance: ${balance}, Price: ${price}, Value: ${value}`); // Log for debugging
+                const tokenBalance = parseFloat(token.balance) / (10 ** (token.decimals || 0));
+                const priceData = prices[token.identifier];
                 
                 let specialIcon = '';
                 if (token.iconType === 'home') {
                     specialIcon = '<span class="home-icon">🏠</span>';
                 } else if (token.iconType === 'favorite') {
                     specialIcon = '<span class="favorite-icon">⭐</span>';
+                } else if (token.iconType === 'native') {
+                    specialIcon = '<span class="native-icon">⚡</span>';
+                }
+
+                let priceHtml = '';
+                if (priceData && priceData.usd !== undefined) {
+                    const usdValue = tokenBalance * priceData.usd;
+                    totalPortfolioValue += usdValue;
+                    
+                    const priceChangeClass = priceData.usd_24h_change >= 0 ? 'positive' : 'negative';
+                    const priceChangeText = formatPriceChange(priceData.usd_24h_change);
+                    
+                    priceHtml = `
+                        <div class="price-info">
+                            <div class="price-usd">$${formatPrice(priceData.usd)}</div>
+                            <div class="price-usd">$${formatPrice(usdValue)}</div>
+                            ${priceChangeText ? `<div class="price-change ${priceChangeClass}">${priceChangeText}</div>` : ''}
+                        </div>
+                    `;
+                } else {
+                    priceHtml = `<div class="price-info"><div class="price-error">${t.price_unavailable}</div></div>`;
                 }
 
                 html += `<li>
@@ -419,23 +600,34 @@
                                      onerror="this.parentElement.innerHTML = '<div class=&quot;asset-placeholder-logo&quot;>${(token.name || token.identifier).substring(0, 2).toUpperCase()}</div>';">
                             </div>
                             <div class="asset-info">
-                                <div class="asset-name">
-                                    <a href="https://explorer.multiversx.com/tokens/${token.identifier}" target="_blank" rel="noopener noreferrer">${token.name || token.identifier} ↗</a>
-                                    ${specialIcon}
+                                <div class="asset-details">
+                                    <div class="asset-name">
+                                        <a href="https://explorer.multiversx.com/tokens/${token.identifier}" target="_blank" rel="noopener noreferrer">${token.name || token.identifier} ↗</a>
+                                        ${specialIcon}
+                                    </div>
+                                    <div class="asset-balance">
+                                        <span>${tokenBalance.toFixed(token.decimals > 4 ? 4 : token.decimals || 0)}</span>
+                                    </div>
                                 </div>
-                                <div class="asset-balance">
-                                    <span>${balance.toFixed(token.decimals > 4 ? 4 : token.decimals || 0)}</span>
-                                </div>
-                                <div class="asset-value">
-                                  <span>${t.token_price_label} ${price > 0 ? '$' + price.toFixed(6) : 'N/A'}</span>
-                                  <span>${t.token_value_label} ${value > 0.01 ? '$' + value.toFixed(2) : 'N/A'}</span>
-                                </div>
+                                ${priceHtml}
                             </div>
                         </li>`;
             });
-            html += `</ul></div>`;
+            html += `</ul>`;
+            
+            // Add total portfolio value
+            if (totalPortfolioValue > 0) {
+                html += `
+                    <div class="total-value">
+                        <h3>${t.total_portfolio_value}</h3>
+                        <div class="amount">$${totalPortfolioValue.toFixed(2)}</div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
         } else {
-            html += `<div class="asset-column"><h4 class="asset-column-title">${t.tokens_section_title}</h4><p>${t.no_tokens_message}</p></div>`;
+            html += `<div class="asset-column"><h4>${t.tokens_section_title}</h4><p>${t.no_tokens_message}</p></div>`;
         }
         
         const userNftsByCollection = {};
@@ -459,237 +651,3 @@
         if (budIndex > -1) {
             const budCollection = allCollections.splice(budIndex, 1)[0];
             budCollection.count = votePower;
-            allNftsForDisplay.push({
-                ...budCollection,
-                collectionName: t.bud_collection_label,
-                iconType: 'home'
-            });
-        }
-        
-        allCollections.sort((a,b) => a.collectionName.localeCompare(b.collectionName));
-        allNftsForDisplay.push(...allCollections);
-
-
-        if (allNftsForDisplay.length > 0) {
-            html += `<div class="asset-column"><h4 class="asset-column-title">${t.nfts_section_title}</h4><ul class="nft-collections-list">`;
-            allNftsForDisplay.forEach(col => {
-                const logo = col.logoUrl;
-                const sanitizedCollectionId = col.collectionId.replace(/[^a-zA-Z0-9]/g, '');
-                
-                let specialIcon = '';
-                if (col.iconType === 'home') {
-                    specialIcon = '<span class="home-icon">🏠</span>';
-                }
-
-                html += `<li>
-                            <div class="asset-logo-container">
-                                <img src="${logo || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='}"
-                                     class="asset-logo" alt="${col.collectionName}"
-                                     onerror="this.parentElement.innerHTML = \`<div class='asset-placeholder-logo'>${col.collectionName.substring(0, 2).toUpperCase()}</div>\`;">
-                            </div>
-                            <div class="asset-info">
-                                <div class="asset-name" id="nft-name-${sanitizedCollectionId}">
-                                    <a href="https://explorer.multiversx.com/collections/${col.collectionId}" target="_blank" rel="noopener noreferrer">${col.collectionName} ↗</a>
-                                    ${specialIcon}
-                                </div>
-                                <div class="asset-balance">
-                                    <span>${col.count} NFT${col.count !== 1 ? 's' : ''}</span>
-                                </div>
-                            </div>
-                        </li>`;
-            });
-            html += `</ul></div>`;
-        } else {
-            html += `<div class="asset-column"><h4 class="asset-column-title">${t.nfts_section_title}</h4><p>${t.no_other_nfts_message}</p></div>`;
-        }
-
-        html += `</div>`; 
-        
-        console.log(`Final Total Value: ${totalValue}`); // Log for debugging
-        walletDetails.innerHTML = html;
-        document.getElementById('total-portfolio-value').textContent = `$${totalValue.toFixed(2)}`;
-      };
-
-      const fetchWalletData = async (address) => {
-        showStatus('wallet-load', 'loading_wallet_data');
-
-        try {
-          if (!address || typeof address !== 'string' || !address.startsWith('erd1') || address.length !== 62) {
-            throw new Error(translations[languageSelector.value]?.invalid_address || translations.en.invalid_address);
-          }
-          
-          const [accountRes, tokensRes, nftsRes, pricesRes] = await Promise.all([
-            fetch(`${restApiBase}/accounts/${address}`),
-            fetch(`${restApiBase}/accounts/${address}/tokens?size=100`),
-            fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
-            fetch(`${xExchangeApiBase}/tokens`),
-          ]);
-          
-          const currentLang = languageSelector ? languageSelector.value : 'en';
-          const t = translations[currentLang] || translations.en;
-
-          if (!accountRes.ok) throw new Error(`${t.api_error_account} (status: ${accountRes.status})`);
-          if (!tokensRes.ok) throw new Error(`${t.api_error_tokens} (status: ${tokensRes.status})`);
-          if (!nftsRes.ok) throw new Error(`${t.api_error_nfts} (status: ${nftsRes.status})`);
-          if (!pricesRes.ok) throw new Error(`${t.api_error_prices} (status: ${pricesRes.status})`);
-
-          const accountData = await accountRes.json();
-          const tokensData = await tokensRes.json();
-          const nftsData = await nftsRes.json();
-          const pricesData = await pricesRes.json();
-          
-          const priceMap = {};
-          if (Array.isArray(pricesData)) {
-              for (const token of pricesData) {
-                  if (token && token.identifier) {
-                      priceMap[token.identifier] = token.price;
-                  } else {
-                      console.warn("Skipping invalid token object from price API:", token);
-                  }
-              }
-          } else {
-              console.error("Price data from API is not an array:", pricesData);
-          }
-
-          const filteredTokens = tokensData.filter(t => parseFloat(t.balance) / (10 ** (t.decimals || 0)) > 0 || t.identifier === 'EGLD');
-          
-          hideStatus();
-          displayData(address, nftsData, filteredTokens, accountData, priceMap);
-
-        } catch (e) {
-          hideStatus();
-          showStatus('wallet-load', 'blockchain_error', 'error', e.message);
-          if (!isManualConnection) {
-              setTimeout(() => {
-                  showLoginUI();
-              }, 3000);
-          }
-        }
-      };
-      
-      const showLoginUI = () => {
-        connectionOptions.style.display = 'block';
-        walletUI.style.display = 'none';
-        isManualConnection = false;
-        const qrCodeContainer = document.getElementById('qr-code-container');
-        if (qrCodeContainer) {
-            qrCodeContainer.innerHTML = '';
-        }
-        document.querySelector('#disconnectBtnNav').style.display = 'none';
-        hideStatus();
-      };
-
-      const showWalletUI = async (address, manual = false) => {
-        connectionOptions.style.display = 'none';
-        walletUI.style.display = 'block';
-        isManualConnection = manual;
-        const disconnectBtnNav = document.getElementById('disconnectBtnNav');
-        if (disconnectBtnNav) {
-            disconnectBtnNav.textContent = (translations[languageSelector.value] || translations.en)[isManualConnection ? 'back_button' : 'disconnect_button'];
-            disconnectBtnNav.className = isManualConnection ? 'button-connect-wallet' : 'button-connect-wallet disconnect-button';
-            disconnectBtnNav.style.display = 'inline-block';
-        }
-        await fetchWalletData(address);
-      };
-
-      const initElven = async () => {
-        try {
-          await ElvenJS.init({
-            chainType: 'mainnet',
-            walletConnectV2ProjectId: 'b8661c4529a06ff0efa2303b7e2ee48e',
-            onLoginStart: () => {
-                showStatus(loginTarget, 'connecting_init');
-            },
-            onLoginSuccess: () => {
-              hideStatus();
-              const raw = ElvenJS.storage.get('address');
-              const addressString = typeof raw === 'object' && raw?.address ? raw.address : (typeof raw === 'string' ? raw : '');
-              if (addressString.startsWith('erd1') && addressString.length === 62) {
-                setTimeout(() => showWalletUI(addressString, false), 100);
-              }
-            },
-            onLoginFailure: (error) => {
-                showStatus(loginTarget, 'extension_error', 'error', error.message || 'Unknown Error');
-                setTimeout(hideStatus, 3000);
-            },
-            onQrPending: () => {
-                showStatus('mobile', 'generating_qr');
-            },
-            onQrLoaded: () => {
-                hideStatus();
-            },
-            onLogoutStart: () => {
-                showStatus('wallet-load', 'disconnecting');
-            },
-            onLogoutSuccess: () => {
-                showLoginUI();
-            },
-            onLogoutFailure: (error) => {
-                showStatus('wallet-load', 'disconnect_error', 'error', error || 'Unknown Error');
-                setTimeout(hideStatus, 3000);
-            },
-          });
-        } catch (err) {
-          showStatus('general', 'elven_init_error', 'error', err.message);
-          setTimeout(hideStatus, 3000);
-        }
-      };
-      
-      await initElven();
-
-      const rawAddress = ElvenJS.storage.get('address');
-      const addressString = typeof rawAddress === 'object' && rawAddress?.address
-        ? rawAddress.address
-        : (typeof rawAddress === 'string' ? rawAddress : '');
-
-      if (addressString.startsWith('erd1') && addressString.length === 62) {
-        setTimeout(() => showWalletUI(addressString, false), 100);
-      } else {
-        showLoginUI();
-      }
-
-      document.getElementById('mobileBtn').addEventListener('click', async () => {
-        try {
-            loginTarget = 'mobile';
-            await ElvenJS.login('mobile', { qrCodeContainer: 'qr-code-container' });
-        } catch (error) {
-            showStatus('mobile', 'qr_error', 'error', error.message);
-        }
-      });
-
-      document.getElementById('extensionBtn').addEventListener('click', async () => {
-        try {
-            loginTarget = 'extension';
-            await ElvenJS.login('browser-extension');
-        } catch (error) {
-            showStatus('extension', 'extension_error', 'error', error.message);
-        }
-      });
-
-      document.getElementById('disconnectBtnNav').addEventListener('click', async () => {
-        if (isManualConnection) {
-          showLoginUI(); 
-        } else {
-          const currentAddress = ElvenJS.storage.get('address'); 
-          if (currentAddress) { 
-              await ElvenJS.logout(); 
-          } else {
-              showLoginUI(); 
-          }
-        }
-      });
-
-      document.getElementById('manualAddressBtn').addEventListener('click', async () => {
-        const address = manualAddressInput.value.trim();
-        if (address.startsWith('erd1') && address.length === 62) {
-          await showWalletUI(address, true);
-        } else {
-          showStatus('manual', 'invalid_manual_address', 'error');
-          setTimeout(hideStatus, 3000);
-        }
-      });
-      
-    });
-  </script>
-</body>
-</html>
