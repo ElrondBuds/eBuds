@@ -149,7 +149,6 @@
             api_error_tokens: "Failed to fetch tokens data",
             api_error_nfts: "Failed to fetch NFTs data",
             api_error_prices: "Failed to fetch price data",
-            api_error_pools: "Failed to fetch pool data",
             elven_init_error: "Error initializing ElvenJS",
             generating_qr: "Generating QR code...",
             qr_error: "Error generating QR code",
@@ -200,7 +199,6 @@
             api_error_tokens: "Nu s-au putut prelua datele tokenilor",
             api_error_nfts: "Nu s-au putut prelua datele NFT-urilor",
             api_error_prices: "Nu s-au putut prelua prețurile",
-            api_error_pools: "Nu s-au putut prelua datele pool-urilor",
             elven_init_error: "Eroare la inițializarea ElvenJS",
             generating_qr: "Se generează codul QR...",
             qr_error: "Eroare la generarea codului QR",
@@ -247,7 +245,6 @@
       
       const restApiBase = 'https://api.multiversx.com';
       const xExchangeApiBase = 'https://api.multiversx.com/mex';
-      const ashswapApiBase = 'https://api-v2.ashswap.io'; // Updated Ashswap API
       
       const ebudsCollectionId = 'BUD-3ee0cf';
       let isManualConnection = false;
@@ -521,12 +518,11 @@
             throw new Error(translations[languageSelector.value]?.invalid_address || translations.en.invalid_address);
           }
           
-          const [accountRes, tokensRes, nftsRes, pricesRes, ashswapPoolsRes] = await Promise.all([
+          const [accountRes, tokensRes, nftsRes, pricesRes] = await Promise.all([
             fetch(`${restApiBase}/accounts/${address}`),
             fetch(`${restApiBase}/accounts/${address}/tokens?size=100`),
             fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
             fetch(`${xExchangeApiBase}/tokens`),
-            fetch(`${ashswapApiBase}/pools`),
           ]);
           
           const currentLang = languageSelector ? languageSelector.value : 'en';
@@ -536,13 +532,11 @@
           if (!tokensRes.ok) throw new Error(`${t.api_error_tokens} (status: ${tokensRes.status})`);
           if (!nftsRes.ok) throw new Error(`${t.api_error_nfts} (status: ${nftsRes.status})`);
           if (!pricesRes.ok) throw new Error(`${t.api_error_prices} (status: ${pricesRes.status})`);
-          if (!ashswapPoolsRes.ok) console.warn(`Could not fetch Ashswap pools (status: ${ashswapPoolsRes.status})`);
           
           const accountData = await accountRes.json();
           const tokensData = await tokensRes.json();
           const nftsData = await nftsRes.json();
           const pricesData = await pricesRes.json();
-          const ashswapPoolsData = ashswapPoolsRes.ok ? await ashswapPoolsRes.json() : [];
           
           const priceMap = {};
           if (Array.isArray(pricesData)) {
@@ -551,31 +545,6 @@
                       priceMap[token.id] = token.price;
                   }
               }
-          }
-
-          const tokensToPrice = tokensData.filter(t => !priceMap[t.identifier]);
-          const wegldPrice = priceMap['WEGLD-bd4d79'] || 0;
-
-          // Ashswap Price Calculation
-          if (Array.isArray(ashswapPoolsData)) {
-            for(const token of tokensToPrice) {
-                if(priceMap[token.identifier]) continue;
-
-                const pool = ashswapPoolsData.find(p => (p.tokens[0].id === token.identifier && p.tokens[1].id === 'WEGLD-bd4d79') || (p.tokens[1].id === token.identifier && p.tokens[0].id === 'WEGLD-bd4d79'));
-                if(pool && wegldPrice > 0) {
-                    const isFirst = pool.tokens[0].id === token.identifier;
-                    const tokenData = pool.tokens[isFirst ? 0 : 1];
-                    const wegldData = pool.tokens[isFirst ? 1 : 0];
-
-                    const tokenReserve = parseFloat(tokenData.reserve);
-                    const wegldReserve = parseFloat(wegldData.reserve);
-                    
-                    if (tokenReserve > 0) {
-                        const price = (wegldReserve / (10**18)) / (tokenReserve / (10**tokenData.decimals)) * wegldPrice;
-                        priceMap[token.identifier] = price;
-                    }
-                }
-            }
           }
 
           const filteredTokens = tokensData.filter(t => parseFloat(t.balance) / (10 ** (t.decimals || 0)) > 0 || t.identifier === 'EGLD');
