@@ -145,6 +145,10 @@
             loading_wallet_data: "Loading wallet data...",
             invalid_address: "Invalid wallet address",
             blockchain_error: "Error fetching data from blockchain",
+            api_error_account: "Failed to fetch account data",
+            api_error_tokens: "Failed to fetch tokens data",
+            api_error_nfts: "Failed to fetch NFTs data",
+            api_error_prices: "Failed to fetch price data",
             elven_init_error: "Error initializing ElvenJS",
             generating_qr: "Generating QR code...",
             qr_error: "Error generating QR code",
@@ -191,6 +195,10 @@
             loading_wallet_data: "Se încarcă datele portofelului...",
             invalid_address: "Adresă portofel invalidă",
             blockchain_error: "Eroare la obținerea datelor de pe blockchain",
+            api_error_account: "Nu s-au putut prelua datele contului",
+            api_error_tokens: "Nu s-au putut prelua datele tokenilor",
+            api_error_nfts: "Nu s-au putut prelua datele NFT-urilor",
+            api_error_prices: "Nu s-au putut prelua prețurile",
             elven_init_error: "Eroare la inițializarea ElvenJS",
             generating_qr: "Se generează codul QR...",
             qr_error: "Eroare la generarea codului QR",
@@ -235,7 +243,6 @@
       const manualAddressInput = document.getElementById('manualAddressInput');
       const languageSelector = document.getElementById('language-selector-wallet');
       
-      const proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=';
       const restApiBase = 'https://api.multiversx.com';
       const xExchangeApiBase = 'https://api.xexchange.com';
       
@@ -507,19 +514,20 @@
             throw new Error(translations[languageSelector.value]?.invalid_address || translations.en.invalid_address);
           }
           
-          const fullApiUrl = `${proxyUrl}${restApiBase}`;
-          const fullXExchangeApiUrl = `${proxyUrl}${xExchangeApiBase}`;
-
           const [accountRes, tokensRes, nftsRes, pricesRes] = await Promise.all([
-            fetch(`${fullApiUrl}/accounts/${address}`),
-            fetch(`${fullApiUrl}/accounts/${address}/tokens?size=100`),
-            fetch(`${fullApiUrl}/accounts/${address}/nfts?size=1000`),
-            fetch(`${fullXExchangeApiUrl}/tokens`),
+            fetch(`${restApiBase}/accounts/${address}`),
+            fetch(`${restApiBase}/accounts/${address}/tokens?size=100`),
+            fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
+            fetch(`${xExchangeApiBase}/tokens`),
           ]);
+          
+          const currentLang = languageSelector ? languageSelector.value : 'en';
+          const t = translations[currentLang] || translations.en;
 
-          if (!accountRes.ok || !tokensRes.ok || !nftsRes.ok || !pricesRes.ok) {
-            throw new Error(translations[languageSelector.value]?.blockchain_error || translations.en.blockchain_error);
-          }
+          if (!accountRes.ok) throw new Error(`${t.api_error_account} (status: ${accountRes.status})`);
+          if (!tokensRes.ok) throw new Error(`${t.api_error_tokens} (status: ${tokensRes.status})`);
+          if (!nftsRes.ok) throw new Error(`${t.api_error_nfts} (status: ${nftsRes.status})`);
+          if (!pricesRes.ok) throw new Error(`${t.api_error_prices} (status: ${pricesRes.status})`);
 
           const accountData = await accountRes.json();
           const tokensData = await tokensRes.json();
@@ -538,7 +546,7 @@
 
         } catch (e) {
           hideStatus();
-          showStatus('wallet-load', 'blockchain_error', 'error', e.message || 'Unknown Error');
+          showStatus('wallet-load', 'blockchain_error', 'error', e.message);
           if (!isManualConnection) {
               setTimeout(() => {
                   showLoginUI();
@@ -673,4 +681,3 @@
   </script>
 </body>
 </html>
-
