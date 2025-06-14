@@ -332,6 +332,7 @@
     };
 
     const displayData = (address, nfts, tokens, accountData, priceMap) => {
+        console.log("Displaying data with price map:", priceMap); // Log for debugging
         const votePower = nfts.filter(nft => nft.collection === ebudsCollectionId).length;
         const currentLang = languageSelector ? languageSelector.value : 'en';
         const t = translations[currentLang] || translations.en;
@@ -339,7 +340,8 @@
         const truncatedAddr = truncateAddress(address);
         
         const egldBalance = accountData?.balance ? parseFloat(accountData.balance) / (10 ** 18) : 0;
-        const egldPrice = priceMap['EGLD'] || 0;
+        const egldPrice = priceMap['WEGLD-bd4d79'] || 0; // CORRECTED: Use WEGLD identifier
+        console.log(`EGLD Balance: ${egldBalance}, EGLD Price: ${egldPrice}`); // Log for debugging
         let totalValue = egldBalance * egldPrice;
 
         let html = `
@@ -401,6 +403,7 @@
                 const price = priceMap[token.identifier] || 0;
                 const value = balance * price;
                 totalValue += value;
+                 console.log(`Token: ${token.identifier}, Balance: ${balance}, Price: ${price}, Value: ${value}`); // Log for debugging
                 
                 let specialIcon = '';
                 if (token.iconType === 'home') {
@@ -501,7 +504,8 @@
         }
 
         html += `</div>`; 
-
+        
+        console.log(`Final Total Value: ${totalValue}`); // Log for debugging
         walletDetails.innerHTML = html;
         document.getElementById('total-portfolio-value').textContent = `$${totalValue.toFixed(2)}`;
       };
