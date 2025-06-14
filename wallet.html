@@ -149,7 +149,7 @@
             api_error_tokens: "Failed to fetch tokens data",
             api_error_nfts: "Failed to fetch NFTs data",
             api_error_prices: "Failed to fetch price data",
-            api_error_ashswap_pools: "Failed to fetch Ashswap pools",
+            api_error_pools: "Failed to fetch pool data",
             elven_init_error: "Error initializing ElvenJS",
             generating_qr: "Generating QR code...",
             qr_error: "Error generating QR code",
@@ -200,7 +200,7 @@
             api_error_tokens: "Nu s-au putut prelua datele tokenilor",
             api_error_nfts: "Nu s-au putut prelua datele NFT-urilor",
             api_error_prices: "Nu s-au putut prelua prețurile",
-            api_error_ashswap_pools: "Nu s-au putut prelua pool-urile Ashswap",
+            api_error_pools: "Nu s-au putut prelua datele pool-urilor",
             elven_init_error: "Eroare la inițializarea ElvenJS",
             generating_qr: "Se generează codul QR...",
             qr_error: "Eroare la generarea codului QR",
@@ -247,7 +247,7 @@
       
       const restApiBase = 'https://api.multiversx.com';
       const xExchangeApiBase = 'https://api.multiversx.com/mex';
-      const ashswapApiBase = 'https://api.ashswap.io';
+      const ashswapApiBase = 'https://ash-api.elrond.gg'; // Updated Ashswap API
       
       const ebudsCollectionId = 'BUD-3ee0cf';
       let isManualConnection = false;
@@ -526,7 +526,7 @@
             fetch(`${restApiBase}/accounts/${address}/tokens?size=100`),
             fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
             fetch(`${xExchangeApiBase}/tokens`),
-            fetch(`${ashswapApiBase}/pools`),
+            fetch(`${ashswapApiBase}/pools`), // Using the updated, stable Ashswap API
           ]);
           
           const currentLang = languageSelector ? languageSelector.value : 'en';
