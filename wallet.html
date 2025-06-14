@@ -332,7 +332,7 @@
     };
 
     const displayData = (address, nfts, tokens, accountData, priceMap) => {
-        console.log("Displaying data with price map:", priceMap);
+        console.log("Displaying data with final price map:", priceMap);
         const votePower = nfts.filter(nft => nft.collection === ebudsCollectionId).length;
         const currentLang = languageSelector ? languageSelector.value : 'en';
         const t = translations[currentLang] || translations.en;
@@ -360,18 +360,17 @@
 
         html += `<div class="assets-title">${t.assets_title}</div><div class="assets-grid">`;
 
-        // Filter tokens that have valid decimals before display
-        const displayableTokens = tokens.filter(token => typeof token.decimals === 'number');
+        // Filter tokens that have valid decimals and a balance before display
+        const displayableTokens = tokens.filter(token => 
+            typeof token.decimals === 'number' &&
+            !isNaN(parseFloat(token.balance)) &&
+            parseFloat(token.balance) > 0
+        ).sort((a,b) => (a.name || a.identifier).localeCompare(b.name || b.identifier));
 
         if (displayableTokens.length > 0) {
             html += `<div class="asset-column"><h4 class="asset-column-title">${t.tokens_section_title}</h4><ul class="token-list">`;
             displayableTokens.forEach(token => {
                 const balance = parseFloat(token.balance) / (10 ** token.decimals);
-                if (isNaN(balance)) {
-                  console.warn(`Could not parse balance for token:`, token);
-                  return;
-                }
-
                 const price = priceMap[token.identifier] || 0;
                 const value = balance * price;
                 totalValue += value;
@@ -489,30 +488,51 @@
             throw new Error(translations[languageSelector.value]?.invalid_address || translations.en.invalid_address);
           }
           
-          const [accountRes, nftsRes, pricesRes, allPairsRes] = await Promise.all([
+          const [accountRes, userTokensRes, nftsRes, pricesRes, allPairsRes] = await Promise.all([
             fetch(`${restApiBase}/accounts/${address}`),
+            fetch(`${restApiBase}/accounts/${address}/tokens?size=500`),
             fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
             fetch(`${xExchangeApiBase}/tokens`),
-            fetch(`${xExchangeApiBase}/pairs?size=2000`), 
+            fetch(`${xExchangeApiBase}/pairs?size=2000`),
           ]);
           
           const currentLang = languageSelector ? languageSelector.value : 'en';
           const t = translations[currentLang] || translations.en;
 
           if (!accountRes.ok) throw new Error(`${t.api_error_account} (status: ${accountRes.status})`);
+          if (!userTokensRes.ok) throw new Error(`${t.api_error_tokens} (status: ${userTokensRes.status})`);
           if (!nftsRes.ok) throw new Error(`${t.api_error_nfts} (status: ${nftsRes.status})`);
           if (!pricesRes.ok) throw new Error(`${t.api_error_prices} (status: ${pricesRes.status})`);
           if (!allPairsRes.ok) console.warn(`Could not fetch xExchange pairs (status: ${allPairsRes.status})`);
           
           const accountData = await accountRes.json();
+          const userTokensData = await userTokensRes.json();
           const nftsData = await nftsRes.json();
           const pricesData = await pricesRes.json();
           const allPairsData = allPairsRes.ok ? await allPairsRes.json() : [];
+
+          // Create a map of user tokens for quick lookup
+          const userTokenMap = userTokensData.reduce((acc, token) => {
+              acc[token.identifier] = token;
+              return acc;
+          }, {});
+
+          // Fetch details for all tokens the user holds in one go
+          const tokenIdentifiers = Object.keys(userTokenMap);
+          let allTokenDetails = [];
+          if (tokenIdentifiers.length > 0) {
+            const tokenDetailsRes = await fetch(`${restApiBase}/tokens?identifiers=${tokenIdentifiers.join(',')}`);
+            if(tokenDetailsRes.ok) {
+              allTokenDetails = await tokenDetailsRes.json();
+            }
+          }
           
-          const tokenIdentifiers = (await (await fetch(`${restApiBase}/accounts/${address}/tokens?size=500`)).json()).map(t => t.identifier);
-          const tokenDetailsRes = await fetch(`${restApiBase}/tokens?identifiers=${tokenIdentifiers.join(',')}`);
-          const tokensData = await tokenDetailsRes.json();
-          
+          // Combine balance with official token details (like decimals)
+          const tokensWithDetails = allTokenDetails.map(detail => ({
+              ...detail,
+              balance: userTokenMap[detail.identifier]?.balance || '0'
+          }));
+
           const priceMap = {};
           if (Array.isArray(pricesData)) {
               for (const token of pricesData) {
@@ -522,7 +542,7 @@
               }
           }
           
-          const tokensToPrice = tokensData.filter(t => !priceMap[t.identifier]);
+          const tokensToPrice = tokensWithDetails.filter(t => !priceMap[t.identifier]);
           if(tokensToPrice.length > 0) {
               const wegldPrice = priceMap['WEGLD-bd4d79'] || 0;
               if (wegldPrice > 0) {
@@ -530,9 +550,9 @@
                       const token1Id = pair.baseId;
                       const token2Id = pair.quoteId;
 
-                      if(!priceMap[token1Id] && token2Id === 'WEGLD-bd4d79' && tokensData.some(t => t.identifier === token1Id)) {
+                      if(!priceMap[token1Id] && token2Id === 'WEGLD-bd4d79' && tokensWithDetails.some(t => t.identifier === token1Id)) {
                           priceMap[token1Id] = pair.price * wegldPrice;
-                      } else if (!priceMap[token2Id] && token1Id === 'WEGLD-bd4d79' && tokensData.some(t => t.identifier === token2Id)) {
+                      } else if (!priceMap[token2Id] && token1Id === 'WEGLD-bd4d79' && tokensWithDetails.some(t => t.identifier === token2Id)) {
                           if (pair.price > 0) {
                             priceMap[token2Id] = (1 / pair.price) * wegldPrice;
                           }
@@ -542,7 +562,7 @@
           }
 
           hideStatus();
-          displayData(address, nftsData, tokensData, accountData, priceMap);
+          displayData(address, nftsData, tokensWithDetails, accountData, priceMap);
 
         } catch (e) {
           hideStatus();
