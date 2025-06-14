@@ -247,7 +247,7 @@
       
       const restApiBase = 'https://api.multiversx.com';
       const xExchangeApiBase = 'https://api.multiversx.com/mex';
-      const ashswapApiBase = 'https://ash-api.elrond.gg'; // Updated Ashswap API
+      const ashswapApiBase = 'https://api-v2.ashswap.io'; // Updated Ashswap API
       
       const ebudsCollectionId = 'BUD-3ee0cf';
       let isManualConnection = false;
@@ -526,7 +526,7 @@
             fetch(`${restApiBase}/accounts/${address}/tokens?size=100`),
             fetch(`${restApiBase}/accounts/${address}/nfts?size=1000`),
             fetch(`${xExchangeApiBase}/tokens`),
-            fetch(`${ashswapApiBase}/pools`), // Using the updated, stable Ashswap API
+            fetch(`${ashswapApiBase}/pools`),
           ]);
           
           const currentLang = languageSelector ? languageSelector.value : 'en';
