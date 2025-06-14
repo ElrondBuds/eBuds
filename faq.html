@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBuds - FAQ</title>
+    <link rel="icon" href="fav.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;600&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-green: #00ff9d;
+            --neon-purple: #b700ff;
+            --dark-bg: #030014;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(0, 0, 0, 0.3);
+            --border-color: rgba(0, 255, 157, 0.2);
+            --text-color: #fff;
+            --highlight-color: var(--neon-green);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', 'Noto Sans', sans-serif; /* Added Noto Sans as fallback */
+            background: var(--dark-bg);
+            color: var(--text-color);
+            line-height: 1.7;
+            padding-top: 80px; /* Added padding for fixed nav */
+        }
+
+        /* Navigation Bar for FAQ Page */
+        nav.faq-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(3, 0, 20, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .faq-nav-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+        }
+
+        /* Added style for logo */
+        .faq-nav-logo {
+            height: 30px; /* Adjust as needed */
+            margin-right: 10px; /* Space between logo and title */
+            vertical-align: middle; /* Align with text */
+        }
+
+        .faq-nav-title {
+            font-family: 'Orbitron', 'Noto Sans', sans-serif; /* Added Noto Sans */
+            font-size: 1.2em;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block; /* To align with logo */
+            vertical-align: middle; /* Align with logo */
+        }
+
+        .nav-title-group { /* Wrapper for logo and title */
+            display: flex;
+            align-items: center;
+        }
+
+        /* Language Selector Styles */
+        .language-selector-container {
+            position: relative;
+        }
+        #language-selector-faq {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-family: 'Orbitron', 'Noto Sans', sans-serif; /* Added Noto Sans */
+            font-size: 0.8rem;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ff9d'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.2em;
+            padding-right: 2rem;
+        }
+        #language-selector-faq:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 5px var(--neon-green);
+        }
+        #language-selector-faq option {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+        }
+
+
+        .container-wrapper {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .main-content-area {
+            background: rgba(10, 5, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            padding: 30px 40px;
+            box-shadow: 0 0 25px rgba(183, 0, 255, 0.2);
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', 'Noto Sans', sans-serif; /* Added Noto Sans */
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.8em;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: 2.8em; text-align: center; margin-top: 0; margin-bottom: 1.2em; }
+        h2 { font-size: 2em; margin-top: 2em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em;}
+
+        .faq-item h3 {
+            font-family: 'Orbitron', 'Noto Sans', sans-serif; /* Added Noto Sans */
+            font-size: 1.4em;
+            color: var(--neon-green);
+            margin-bottom: 0.6em;
+            line-height: 1.3;
+        }
+
+        p {
+            margin-bottom: 1.2em;
+            font-size: 1.05em;
+        }
+
+        .highlight {
+            color: var(--highlight-color);
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 25px;
+            margin-bottom: 1em;
+        }
+
+        li {
+            position: relative;
+            padding: 8px 0;
+            font-size: 1em;
+        }
+
+        li::before {
+            content: '→';
+            position: absolute;
+            left: -25px;
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+
+        a {
+            color: var(--neon-green);
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        a:hover {
+            color: var(--neon-purple);
+            text-shadow: 0 0 5px var(--neon-purple);
+        }
+        a.highlight:hover {
+             color: var(--neon-purple);
+        }
+
+
+        .back-link-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .back-link {
+            font-family: 'Orbitron', 'Noto Sans', sans-serif; /* Added Noto Sans */
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+            color: var(--dark-bg);
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 157, 0.4);
+        }
+
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(183, 0, 255, 0.1), transparent 35%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 157, 0.1), transparent 35%);
+            z-index: -1;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 0 10px; padding-top: 70px; }
+            .container-wrapper {
+                padding: 10px;
+                margin: 20px 0;
+            }
+            .main-content-area { padding: 20px; }
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.6em; }
+            .faq-item h3 { font-size: 1.3em; }
+            .faq-nav-title { font-size: 1em; }
+            .faq-nav-logo { height: 25px; } /* Adjust logo size for mobile */
+            #language-selector-faq { font-size: 0.75rem; padding: 0.3rem 0.5rem; padding-right: 1.6rem;}
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+
+    <nav class="faq-nav">
+        <div class="faq-nav-container">
+            <div class="nav-title-group"> <img src="assets/logo.png" alt="eBuds Logo" class="faq-nav-logo">
+                <div class="faq-nav-title">eBuds FAQ</div>
+            </div>
+            <div class="language-selector-container">
+                <select id="language-selector-faq" aria-label="Select Language">
+                    <option value="en">EN</option>
+                    <option value="ar">AR</option>
+                    <option value="zh">ZH</option>
+                    <option value="de">DE</option>
+                    <option value="es">ES</option>
+                    <option value="fr">FR</option>
+                    <option value="it">IT</option>
+                    <option value="ja">JA</option>
+                    <option value="ko">KO</option>
+                    <option value="ro">RO</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-wrapper">
+        <div class="main-content-area">
+            <h1 data-translate-key="faq_main_title">Frequently Asked Questions (FAQ)</h1>
+
+            <div class="faq-item">
+                <h3 data-translate-key="faq_q_what_is_multiversx">What is MultiversX?</h3>
+                <p data-translate-key="faq_a_what_is_multiversx_1">MultiversX (formerly Elrond) is a highly scalable, fast, and secure blockchain platform for distributed apps, enterprise use cases, and the new internet economy. It is known for its innovative "Adaptive State Sharding" technology, which allows it to process a high volume of transactions at a low cost.</p>
+                <p data-translate-key="faq_a_what_is_multiversx_2">Think of it as a super-efficient digital ledger that can handle many operations simultaneously, making it ideal for complex applications like DeFi and DAOs.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3 data-translate-key="faq_q_what_is_ebuds">What is eBuds?</h3>
+                <p data-translate-key="faq_a_what_is_ebuds_1">eBuds is a Decentralized Autonomous Community (DAO) built on the MultiversX blockchain. Our goal is to create an inclusive and rewarding ecosystem where community members actively participate in governance, benefit from tokenized incentives, and engage with unique NFT utilities.</p>
+                <p data-translate-key="faq_a_what_is_ebuds_2">We aim to empower our members by giving them a real voice in the project's direction and sharing in its success.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3 data-translate-key="faq_q_get_started">How can I get started with eBuds?</h3>
+                <p data-translate-key="faq_a_get_started_intro">To start interacting with the eBuds project, you'll generally need to follow these steps:</p>
+                <ul>
+                    <li data-translate-key="faq_gs_item_wallet"><strong>Get a MultiversX Wallet:</strong> You'll need a compatible wallet to hold MultiversX-based tokens (like EGLD, EBUD, LUV) and NFTs. The official <a href="https://xportal.com/app?code=9of4ztzb8v" target="_blank" rel="noopener noreferrer" class="highlight">xPortal app</a> is a popular choice.</li>
+                    <li data-translate-key="faq_gs_item_egld"><strong>Acquire EGLD:</strong> EGLD is the native currency of the MultiversX blockchain, used for transaction fees. You can acquire EGLD from various cryptocurrency exchanges.</li>
+                    <li data-translate-key="faq_gs_item_tokens"><strong>Get eBuds Tokens (EBUD/LUV):</strong> You can typically acquire EBUD and LUV tokens on decentralized exchanges (DEXs) within the MultiversX ecosystem, such as <a href="https://xexchange.com/" target="_blank" rel="noopener noreferrer" class="highlight">xExchange</a> or <a href="https://app.jexchange.io/" target="_blank" rel="noopener noreferrer" class="highlight">Jexchange</a>.</li>
+                    <li data-translate-key="faq_gs_item_nft"><strong>Acquire an eBudsNFT (Optional but Recommended):</strong> Holding an eBudsNFT grants you governance rights and access to specific rewards and features within our ecosystem. You can find our NFTs on platforms like <a href="https://xspotlight.com/" target="_blank" rel="noopener noreferrer" class="highlight">xSpotlight</a> or marketplaces like <a href="https://xoxno.com/collection/BUD-3ee0cf" target="_blank" rel="noopener noreferrer" class="highlight">XOXNO</a>.</li>
+                    <li data-translate-key="faq_gs_item_community"><strong>Join the Community:</strong> Engage with us on platforms like <a href="https://discord.com/channels/531741323988828161/1093904270430064674" target="_blank" rel="noopener noreferrer" class="highlight">Discord</a> and <a href="https://t.me/ElrondBuds" target="_blank" rel="noopener noreferrer" class="highlight">Telegram</a> to stay updated, ask questions, and participate in discussions.</li>
+                    <li data-translate-key="faq_gs_item_governance"><strong>Participate in Governance:</strong> If you hold eBudsNFTs or EBUD tokens (depending on governance rules), you can participate in DAO proposals and voting, typically through a platform like <a href="https://peerme.io/" target="_blank" rel="noopener noreferrer" class="highlight">PeerMe</a>.</li>
+                </ul>
+                <p data-translate-key="faq_gs_item_caution">Always ensure you are interacting with official links and be cautious of scams. Check our official website and community channels for the most up-to-date information.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3 data-translate-key="faq_q_ebud_luv">What are EBUD and LUV tokens?</h3>
+                <p data-translate-key="faq_a_ebud_luv_ebud"><span class="highlight">EBUD</span> is our primary utility and reward token. It's used for governance participation, staking rewards (as per v.1 mechanics, evolving with v.2), and will be integrated into various ecosystem utilities.</p>
+                <p data-translate-key="faq_a_ebud_luv_luv"><span class="highlight">LUV</span> is our secondary token, primarily designed to support the liquidity of EBUD. It plays a crucial role in maintaining stable trading pairs and may have future uses for loyalty rewards within the community.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3 data-translate-key="faq_q_nft_work">How do eBudsNFTs work?</h3>
+                <p data-translate-key="faq_a_nft_work_intro">eBudsNFTs are more than just digital collectibles. They represent your stake and membership within the eBudsDAC.</p>
+                <ul>
+                    <li data-translate-key="faq_a_nft_work_gov"><strong>Governance Rights:</strong> Holding an NFT typically grants you voting power in DAO decisions.</li>
+                    <li data-translate-key="faq_a_nft_work_rewards"><strong>Reward Eligibility:</strong> NFT holders were eligible for EBUD token rewards under the v.1 system. The reward mechanisms may evolve with v.2 and future developments.</li>
+                    <li data-translate-key="faq_a_nft_work_access"><strong>Exclusive Access:</strong> NFTs can provide access to special community channels, events, or features.</li>
+                </ul>
+                <p data-translate-key="faq_a_nft_work_outro">Each NFT is a unique digital asset on the MultiversX blockchain, providing both utility and a distinct identity within our ecosystem.</p>
+            </div>
+
+            <div class="back-link-container">
+                <a href="index.html" class="back-link" data-translate-key="faq_back_to_main">← Back to Main Site</a>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        // --- Translation Data ---
+        const translations = {
+            en: {
+                faq_main_title: "Frequently Asked Questions (FAQ)",
+                faq_q_what_is_multiversx: "What is MultiversX?",
+                faq_a_what_is_multiversx_1: "MultiversX (formerly Elrond) is a highly scalable, fast, and secure blockchain platform for distributed apps, enterprise use cases, and the new internet economy. It is known for its innovative \"Adaptive State Sharding\" technology, which allows it to process a high volume of transactions at a low cost.",
+                faq_a_what_is_multiversx_2: "Think of it as a super-efficient digital ledger that can handle many operations simultaneously, making it ideal for complex applications like DeFi and DAOs.",
+                faq_q_what_is_ebuds: "What is eBuds?",
+                faq_a_what_is_ebuds_1: "eBuds is a Decentralized Autonomous Community (DAO) built on the MultiversX blockchain. Our goal is to create an inclusive and rewarding ecosystem where community members actively participate in governance, benefit from tokenized incentives, and engage with unique NFT utilities.",
+                faq_a_what_is_ebuds_2: "We aim to empower our members by giving them a real voice in the project's direction and sharing in its success.",
+                faq_q_get_started: "How can I get started with eBuds?",
+                faq_a_get_started_intro: "To start interacting with the eBuds project, you'll generally need to follow these steps:",
+                faq_gs_item_wallet: "<strong>Get a MultiversX Wallet:</strong> You'll need a compatible wallet to hold MultiversX-based tokens (like EGLD, EBUD, LUV) and NFTs. The official <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal app</a> is a popular choice.",
+                faq_gs_item_egld: "<strong>Acquire EGLD:</strong> EGLD is the native currency of the MultiversX blockchain, used for transaction fees. You can acquire EGLD from various cryptocurrency exchanges.",
+                faq_gs_item_tokens: "<strong>Get eBuds Tokens (EBUD/LUV):</strong> You can typically acquire EBUD and LUV tokens on decentralized exchanges (DEXs) within the MultiversX ecosystem, such as <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> or <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>.",
+                faq_gs_item_nft: "<strong>Acquire an eBudsNFT (Optional but Recommended):</strong> Holding an eBudsNFT grants you governance rights and access to specific rewards and features within our ecosystem. You can find our NFTs on platforms like <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> or marketplaces like <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a>.",
+                faq_gs_item_community: "<strong>Join the Community:</strong> Engage with us on platforms like <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> and <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a> to stay updated, ask questions, and participate in discussions.",
+                faq_gs_item_governance: "<strong>Participate in Governance:</strong> If you hold eBudsNFTs or EBUD tokens (depending on governance rules), you can participate in DAO proposals and voting, typically through a platform like <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a>.",
+                faq_gs_item_caution: "Always ensure you are interacting with official links and be cautious of scams. Check our official website and community channels for the most up-to-date information.",
+                faq_q_ebud_luv: "What are EBUD and LUV tokens?",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> is our primary utility and reward token. It's used for governance participation, staking rewards (as per v.1 mechanics, evolving with v.2), and will be integrated into various ecosystem utilities.",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> is our secondary token, primarily designed to support the liquidity of EBUD. It plays a crucial role in maintaining stable trading pairs and may have future uses for loyalty rewards within the community.",
+                faq_q_nft_work: "How do eBudsNFTs work?",
+                faq_a_nft_work_intro: "eBudsNFTs are more than just digital collectibles. They represent your stake and membership within the eBudsDAC.",
+                faq_a_nft_work_gov: "<strong>Governance Rights:</strong> Holding an NFT typically grants you voting power in DAO decisions.",
+                faq_a_nft_work_rewards: "<strong>Reward Eligibility:</strong> NFT holders were eligible for EBUD token rewards under the v.1 system. The reward mechanisms may evolve with v.2 and future developments.",
+                faq_a_nft_work_access: "<strong>Exclusive Access:</strong> NFTs can provide access to special community channels, events, or features.",
+                faq_a_nft_work_outro: "Each NFT is a unique digital asset on the MultiversX blockchain, providing both utility and a distinct identity within our ecosystem.",
+                faq_back_to_main: "← Back to Main Site"
+            },
+            es: { // Spanish Translations
+                faq_main_title: "Preguntas Frecuentes (FAQ)",
+                faq_q_what_is_multiversx: "¿Qué es MultiversX?",
+                faq_a_what_is_multiversx_1: "MultiversX (anteriormente Elrond) es una plataforma blockchain altamente escalable, rápida y segura para aplicaciones distribuidas, casos de uso empresariales y la nueva economía de Internet. Es conocida por su innovadora tecnología \"Adaptive State Sharding\", que le permite procesar un alto volumen de transacciones a bajo costo.",
+                faq_a_what_is_multiversx_2: "Piénsalo como un libro de contabilidad digital súper eficiente que puede manejar muchas operaciones simultáneamente, lo que lo hace ideal para aplicaciones complejas como DeFi y DAOs.",
+                faq_q_what_is_ebuds: "¿Qué es eBuds?",
+                faq_a_what_is_ebuds_1: "eBuds es una Comunidad Autónoma Descentralizada (DAO) construida sobre la blockchain de MultiversX. Nuestro objetivo es crear un ecosistema inclusivo y gratificante donde los miembros de la comunidad participen activamente en la gobernanza, se beneficien de incentivos tokenizados e interactúen con utilidades NFT únicas.",
+                faq_a_what_is_ebuds_2: "Nuestro objetivo es empoderar a nuestros miembros dándoles una voz real en la dirección del proyecto y compartiendo su éxito.",
+                faq_q_get_started: "¿Cómo puedo empezar con eBuds?",
+                faq_a_get_started_intro: "Para comenzar a interactuar con el proyecto eBuds, generalmente deberás seguir estos pasos:",
+                faq_gs_item_wallet: "<strong>Obtén una Billetera MultiversX:</strong> Necesitarás una billetera compatible para guardar tokens basados en MultiversX (como EGLD, EBUD, LUV) y NFTs. La aplicación oficial <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal</a> es una opción popular.",
+                faq_gs_item_egld: "<strong>Adquiere EGLD:</strong> EGLD es la moneda nativa de la blockchain MultiversX, utilizada para las tarifas de transacción. Puedes adquirir EGLD en varios intercambios de criptomonedas.",
+                faq_gs_item_tokens: "<strong>Obtén Tokens eBuds (EBUD/LUV):</strong> Generalmente puedes adquirir tokens EBUD y LUV en intercambios descentralizados (DEXs) dentro del ecosistema MultiversX, como <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> o <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>.",
+                faq_gs_item_nft: "<strong>Adquiere un eBudsNFT (Opcional pero Recomendado):</strong> Tener un eBudsNFT te otorga derechos de gobernanza y acceso a recompensas y características específicas dentro de nuestro ecosistema. Puedes encontrar nuestros NFTs en plataformas como <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> o mercados como <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a>.",
+                faq_gs_item_community: "<strong>Únete a la Comunidad:</strong> Interactúa con nosotros en plataformas como <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> y <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a> para mantenerte actualizado, hacer preguntas y participar en discusiones.",
+                faq_gs_item_governance: "<strong>Participa en la Gobernanza:</strong> Si posees eBudsNFTs o tokens EBUD (dependiendo de las reglas de gobernanza), puedes participar en propuestas y votaciones de la DAO, generalmente a través de una plataforma como <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a>.",
+                faq_gs_item_caution: "Asegúrate siempre de interactuar con enlaces oficiales y ten cuidado con las estafas. Consulta nuestro sitio web oficial y los canales de la comunidad para obtener la información más actualizada.",
+                faq_q_ebud_luv: "¿Qué son los tokens EBUD y LUV?",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> es nuestro token principal de utilidad y recompensa. Se utiliza para la participación en la gobernanza, recompensas de staking (según la mecánica v.1, evolucionando con v.2) y se integrará en diversas utilidades del ecosistema.",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> es nuestro token secundario, diseñado principalmente para respaldar la liquidez de EBUD. Juega un papel crucial en el mantenimiento de pares comerciales estables y puede tener usos futuros para recompensas de lealtad dentro de la comunidad.",
+                faq_q_nft_work: "¿Cómo funcionan los eBudsNFTs?",
+                faq_a_nft_work_intro: "Los eBudsNFTs son más que simples coleccionables digitales. Representan tu participación y membresía dentro de eBudsDAC.",
+                faq_a_nft_work_gov: "<strong>Derechos de Gobernanza:</strong> Tener un NFT generalmente te otorga poder de voto en las decisiones de la DAO.",
+                faq_a_nft_work_rewards: "<strong>Elegibilidad para Recompensas:</strong> Los titulares de NFT eran elegibles para recompensas en tokens EBUD bajo el sistema v.1. Los mecanismos de recompensa pueden evolucionar con v.2 y desarrollos futuros.",
+                faq_a_nft_work_access: "<strong>Acceso Exclusivo:</strong> Los NFTs pueden proporcionar acceso a canales comunitarios especiales, eventos o características.",
+                faq_a_nft_work_outro: "Cada NFT es un activo digital único en la blockchain de MultiversX, que proporciona tanto utilidad como una identidad distintiva dentro de nuestro ecosistema.",
+                faq_back_to_main: "← Volver al Sitio Principal"
+            },
+            fr: { // French Translations
+                faq_main_title: "Questions Fréquemment Posées (FAQ)",
+                faq_q_what_is_multiversx: "Qu'est-ce que MultiversX ?",
+                faq_a_what_is_multiversx_1: "MultiversX (anciennement Elrond) est une plateforme blockchain hautement évolutive, rapide et sécurisée pour les applications distribuées, les cas d'usage professionnels et la nouvelle économie d'Internet. Elle est connue pour sa technologie innovante \"Adaptive State Sharding\", qui lui permet de traiter un volume élevé de transactions à faible coût.",
+                faq_a_what_is_multiversx_2: "Considérez-le comme un grand livre numérique super efficace capable de gérer de nombreuses opérations simultanément, ce qui le rend idéal pour des applications complexes comme la DeFi et les DAO.",
+                faq_q_what_is_ebuds: "Qu'est-ce qu'eBuds ?",
+                faq_a_what_is_ebuds_1: "eBuds est une Communauté Autonome Décentralisée (DAO) construite sur la blockchain MultiversX. Notre objectif est de créer un écosystème inclusif et gratifiant où les membres de la communauté participent activement à la gouvernance, bénéficient d'incitations tokenisées et interagissent avec des utilitaires NFT uniques.",
+                faq_a_what_is_ebuds_2: "Nous visons à autonomiser nos membres en leur donnant une réelle voix dans l'orientation du projet et en partageant son succès.",
+                faq_q_get_started: "Comment puis-je commencer avec eBuds ?",
+                faq_a_get_started_intro: "Pour commencer à interagir avec le projet eBuds, vous devrez généralement suivre ces étapes :",
+                faq_gs_item_wallet: "<strong>Obtenez un portefeuille MultiversX :</strong> Vous aurez besoin d'un portefeuille compatible pour détenir des jetons basés sur MultiversX (comme EGLD, EBUD, LUV) et des NFT. L'application officielle <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal</a> est un choix populaire.",
+                faq_gs_item_egld: "<strong>Acquérez des EGLD :</strong> EGLD est la monnaie native de la blockchain MultiversX, utilisée pour les frais de transaction. Vous pouvez acquérir des EGLD sur diverses bourses de cryptomonnaies.",
+                faq_gs_item_tokens: "<strong>Obtenez des jetons eBuds (EBUD/LUV) :</strong> Vous pouvez généralement acquérir des jetons EBUD et LUV sur des échanges décentralisés (DEX) au sein de l'écosystème MultiversX, tels que <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> ou <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>.",
+                faq_gs_item_nft: "<strong>Acquérez un eBudsNFT (Facultatif mais recommandé) :</strong> Détenir un eBudsNFT vous accorde des droits de gouvernance et un accès à des récompenses et fonctionnalités spécifiques au sein de notre écosystème. Vous pouvez trouver nos NFT sur des plateformes comme <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> ou des places de marché comme <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a>.",
+                faq_gs_item_community: "<strong>Rejoignez la communauté :</strong> Interagissez avec nous sur des plateformes comme <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> et <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a> pour rester informé, poser des questions et participer aux discussions.",
+                faq_gs_item_governance: "<strong>Participez à la gouvernance :</strong> Si vous détenez des eBudsNFTs ou des jetons EBUD (selon les règles de gouvernance), vous pouvez participer aux propositions et aux votes de la DAO, généralement via une plateforme comme <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a>.",
+                faq_gs_item_caution: "Assurez-vous toujours d'interagir avec les liens officiels et soyez prudent face aux arnaques. Consultez notre site Web officiel et nos canaux communautaires pour obtenir les informations les plus récentes.",
+                faq_q_ebud_luv: "Que sont les jetons EBUD et LUV ?",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> est notre principal jeton d'utilité et de récompense. Il est utilisé pour la participation à la gouvernance, les récompenses de staking (selon la mécanique v.1, évoluant avec la v.2) et sera intégré dans diverses utilités de l'écosystème.",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> est notre jeton secondaire, principalement conçu pour soutenir la liquidité d'EBUD. Il joue un rôle crucial dans le maintien de paires de trading stables et pourrait avoir des utilisations futures pour les récompenses de fidélité au sein de la communauté.",
+                faq_q_nft_work: "Comment fonctionnent les eBudsNFTs ?",
+                faq_a_nft_work_intro: "Les eBudsNFTs sont plus que de simples objets de collection numériques. Ils représentent votre participation et votre adhésion au sein d'eBudsDAC.",
+                faq_a_nft_work_gov: "<strong>Droits de gouvernance :</strong> Détenir un NFT vous accorde généralement un pouvoir de vote dans les décisions de la DAO.",
+                faq_a_nft_work_rewards: "<strong>Éligibilité aux récompenses :</strong> Les détenteurs de NFT étaient éligibles aux récompenses en jetons EBUD dans le cadre du système v.1. Les mécanismes de récompense peuvent évoluer avec la v.2 et les développements futurs.",
+                faq_a_nft_work_access: "<strong>Accès exclusif :</strong> Les NFT peuvent donner accès à des canaux communautaires spéciaux, des événements ou des fonctionnalités.",
+                faq_a_nft_work_outro: "Chaque NFT est un actif numérique unique sur la blockchain MultiversX, offrant à la fois une utilité et une identité distincte au sein de notre écosystème.",
+                faq_back_to_main: "← Retour au Site Principal"
+            },
+            it: { // Italian Translations
+                faq_main_title: "Domande Frequenti (FAQ)",
+                faq_q_what_is_multiversx: "Cos'è MultiversX?",
+                faq_a_what_is_multiversx_1: "MultiversX (precedentemente Elrond) è una piattaforma blockchain altamente scalabile, veloce e sicura per app distribuite, casi d'uso aziendali e la nuova economia di internet. È nota per la sua innovativa tecnologia \"Adaptive State Sharding\", che le consente di elaborare un elevato volume di transazioni a basso costo.",
+                faq_a_what_is_multiversx_2: "Pensala come un registro digitale super efficiente in grado di gestire molte operazioni contemporaneamente, rendendola ideale per applicazioni complesse come DeFi e DAO.",
+                faq_q_what_is_ebuds: "Cos'è eBuds?",
+                faq_a_what_is_ebuds_1: "eBuds è una Comunità Autonoma Decentralizzata (DAO) costruita sulla blockchain MultiversX. Il nostro obiettivo è creare un ecosistema inclusivo e gratificante in cui i membri della comunità partecipano attivamente alla governance, beneficiano di incentivi tokenizzati e interagiscono con utilità NFT uniche.",
+                faq_a_what_is_ebuds_2: "Miriamo a dare potere ai nostri membri dando loro una voce reale nella direzione del progetto e condividendo il suo successo.",
+                faq_q_get_started: "Come posso iniziare con eBuds?",
+                faq_a_get_started_intro: "Per iniziare a interagire con il progetto eBuds, generalmente dovrai seguire questi passaggi:",
+                faq_gs_item_wallet: "<strong>Ottieni un portafoglio MultiversX:</strong> Avrai bisogno di un portafoglio compatibile per conservare token basati su MultiversX (come EGLD, EBUD, LUV) e NFT. L'app ufficiale <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal</a> è una scelta popolare.",
+                faq_gs_item_egld: "<strong>Acquista EGLD:</strong> EGLD è la valuta nativa della blockchain MultiversX, utilizzata per le commissioni di transazione. Puoi acquistare EGLD da vari exchange di criptovalute.",
+                faq_gs_item_tokens: "<strong>Ottieni Token eBuds (EBUD/LUV):</strong> Di solito puoi acquistare token EBUD e LUV su exchange decentralizzati (DEX) all'interno dell'ecosistema MultiversX, come <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> o <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>.",
+                faq_gs_item_nft: "<strong>Acquista un eBudsNFT (Opzionale ma consigliato):</strong> Possedere un eBudsNFT ti garantisce diritti di governance e accesso a ricompense e funzionalità specifiche all'interno del nostro ecosistema. Puoi trovare i nostri NFT su piattaforme come <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> o marketplace come <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a>.",
+                faq_gs_item_community: "<strong>Unisciti alla Comunità:</strong> Interagisci con noi su piattaforme come <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> e <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a> per rimanere aggiornato, fare domande e partecipare alle discussioni.",
+                faq_gs_item_governance: "<strong>Partecipa alla Governance:</strong> Se possiedi eBudsNFT o token EBUD (a seconda delle regole di governance), puoi partecipare a proposte e votazioni della DAO, tipicamente attraverso una piattaforma come <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a>.",
+                faq_gs_item_caution: "Assicurati sempre di interagire con i link ufficiali e fai attenzione alle truffe. Controlla il nostro sito Web ufficiale e i canali della comunità per le informazioni più aggiornate.",
+                faq_q_ebud_luv: "Cosa sono i token EBUD e LUV?",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> è il nostro token principale di utilità e ricompensa. Viene utilizzato per la partecipazione alla governance, le ricompense di staking (secondo la meccanica v.1, in evoluzione con la v.2) e sarà integrato in varie utilità dell'ecosistema.",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> è il nostro token secondario, progettato principalmente per supportare la liquidità di EBUD. Svolge un ruolo cruciale nel mantenimento di coppie di trading stabili e potrebbe avere usi futuri per ricompense di fedeltà all'interno della comunità.",
+                faq_q_nft_work: "Come funzionano gli eBudsNFT?",
+                faq_a_nft_work_intro: "Gli eBudsNFT sono più di semplici oggetti da collezione digitali. Rappresentano la tua partecipazione e appartenenza all'interno di eBudsDAC.",
+                faq_a_nft_work_gov: "<strong>Diritti di Governance:</strong> Possedere un NFT ti garantisce tipicamente potere di voto nelle decisioni della DAO.",
+                faq_a_nft_work_rewards: "<strong>Idoneità alle Ricompense:</strong> I possessori di NFT erano idonei a ricompense in token EBUD con il sistema v.1. I meccanismi di ricompensa potrebbero evolvere con la v.2 e sviluppi futuri.",
+                faq_a_nft_work_access: "<strong>Accesso Esclusivo:</strong> Gli NFT possono fornire accesso a canali comunitari speciali, eventi o funzionalità.",
+                faq_a_nft_work_outro: "Ogni NFT è un asset digitale unico sulla blockchain MultiversX, che fornisce sia utilità che un'identità distintiva all'interno del nostro ecosistema.",
+                faq_back_to_main: "← Torna al Sito Principale"
+            },
+            de: { // German Translations
+                faq_main_title: "Häufig Gestellte Fragen (FAQ)",
+                faq_q_what_is_multiversx: "Was ist MultiversX?",
+                faq_a_what_is_multiversx_1: "MultiversX (ehemals Elrond) ist eine hochskalierbare, schnelle und sichere Blockchain-Plattform für verteilte Apps, Unternehmensanwendungen und die neue Internetwirtschaft. Sie ist bekannt für ihre innovative \"Adaptive State Sharding\"-Technologie, die es ihr ermöglicht, ein hohes Transaktionsvolumen zu geringen Kosten zu verarbeiten.",
+                faq_a_what_is_multiversx_2: "Stellen Sie es sich als ein supereffizientes digitales Hauptbuch vor, das viele Operationen gleichzeitig verarbeiten kann und sich somit ideal für komplexe Anwendungen wie DeFi und DAOs eignet.",
+                faq_q_what_is_ebuds: "Was ist eBuds?",
+                faq_a_what_is_ebuds_1: "eBuds ist eine Dezentrale Autonome Gemeinschaft (DAO), die auf der MultiversX-Blockchain basiert. Unser Ziel ist es, ein inklusives und lohnendes Ökosystem zu schaffen, in dem Community-Mitglieder aktiv an der Governance teilnehmen, von tokenisierten Anreizen profitieren und einzigartige NFT-Utilities nutzen.",
+                faq_a_what_is_ebuds_2: "Wir möchten unsere Mitglieder stärken, indem wir ihnen eine echte Stimme bei der Ausrichtung des Projekts geben und sie am Erfolg teilhaben lassen.",
+                faq_q_get_started: "Wie kann ich mit eBuds beginnen?",
+                faq_a_get_started_intro: "Um mit dem eBuds-Projekt zu interagieren, müssen Sie im Allgemeinen die folgenden Schritte ausführen:",
+                faq_gs_item_wallet: "<strong>Holen Sie sich ein MultiversX-Wallet:</strong> Sie benötigen ein kompatibles Wallet, um MultiversX-basierte Token (wie EGLD, EBUD, LUV) und NFTs zu halten. Die offizielle <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal-App</a> ist eine beliebte Wahl.",
+                faq_gs_item_egld: "<strong>Erwerben Sie EGLD:</strong> EGLD ist die native Währung der MultiversX-Blockchain und wird für Transaktionsgebühren verwendet. Sie können EGLD an verschiedenen Kryptowährungsbörsen erwerben.",
+                faq_gs_item_tokens: "<strong>Holen Sie sich eBuds-Token (EBUD/LUV):</strong> Sie können EBUD- und LUV-Token typischerweise auf dezentralen Börsen (DEXs) innerhalb des MultiversX-Ökosystems erwerben, wie z.B. <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> oder <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>.",
+                faq_gs_item_nft: "<strong>Erwerben Sie ein eBudsNFT (Optional, aber empfohlen):</strong> Der Besitz eines eBudsNFT gewährt Ihnen Governance-Rechte und Zugang zu spezifischen Belohnungen und Funktionen innerhalb unseres Ökosystems. Sie finden unsere NFTs auf Plattformen wie <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> oder Marktplätzen wie <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a>.",
+                faq_gs_item_community: "<strong>Treten Sie der Community bei:</strong> Interagieren Sie mit uns auf Plattformen wie <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> und <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a>, um auf dem Laufenden zu bleiben, Fragen zu stellen und an Diskussionen teilzunehmen.",
+                faq_gs_item_governance: "<strong>Nehmen Sie an der Governance teil:</strong> Wenn Sie eBudsNFTs oder EBUD-Token besitzen (abhängig von den Governance-Regeln), können Sie an DAO-Vorschlägen und -Abstimmungen teilnehmen, typischerweise über eine Plattform wie <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a>.",
+                faq_gs_item_caution: "Stellen Sie immer sicher, dass Sie mit offiziellen Links interagieren und seien Sie vorsichtig bei Betrugsversuchen. Überprüfen Sie unsere offizielle Website und Community-Kanäle für die aktuellsten Informationen.",
+                faq_q_ebud_luv: "Was sind EBUD- und LUV-Token?",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> ist unser primärer Utility- und Belohnungs-Token. Er wird für die Teilnahme an der Governance, Staking-Belohnungen (gemäß v.1-Mechanik, Weiterentwicklung mit v.2) verwendet und wird in verschiedene Ökosystem-Utilities integriert.",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> ist unser sekundärer Token, der hauptsächlich zur Unterstützung der Liquidität von EBUD entwickelt wurde. Er spielt eine entscheidende Rolle bei der Aufrechterhaltung stabiler Handelspaare und kann zukünftig für Treueprämien innerhalb der Community verwendet werden.",
+                faq_q_nft_work: "Wie funktionieren eBudsNFTs?",
+                faq_a_nft_work_intro: "eBudsNFTs sind mehr als nur digitale Sammlerstücke. Sie repräsentieren Ihren Anteil und Ihre Mitgliedschaft innerhalb von eBudsDAC.",
+                faq_a_nft_work_gov: "<strong>Governance-Rechte:</strong> Der Besitz eines NFT gewährt Ihnen in der Regel Stimmrecht bei DAO-Entscheidungen.",
+                faq_a_nft_work_rewards: "<strong>Belohnungsberechtigung:</strong> NFT-Inhaber waren im Rahmen des v.1-Systems für EBUD-Token-Belohnungen berechtigt. Die Belohnungsmechanismen können sich mit v.2 und zukünftigen Entwicklungen ändern.",
+                faq_a_nft_work_access: "<strong>Exklusiver Zugang:</strong> NFTs können Zugang zu speziellen Community-Kanälen, Veranstaltungen oder Funktionen bieten.",
+                faq_a_nft_work_outro: "Jedes NFT ist ein einzigartiges digitales Asset auf der MultiversX-Blockchain, das sowohl Nutzen als auch eine unverwechselbare Identität innerhalb unseres Ökosystems bietet.",
+                faq_back_to_main: "← Zurück zur Hauptseite"
+            },
+            ar: { // Arabic Translations
+                faq_main_title: "الأسئلة الشائعة (FAQ)",
+                faq_q_what_is_multiversx: "ما هو MultiversX؟",
+                faq_a_what_is_multiversx_1: "MultiversX (المعروف سابقًا باسم Elrond) هو منصة بلوكشين قابلة للتطوير بدرجة عالية وسريعة وآمنة للتطبيقات الموزعة وحالات الاستخدام المؤسسي واقتصاد الإنترنت الجديد. تشتهر بتقنيتها المبتكرة \"التقسيم التكيفي للحالة\" ، والتي تسمح لها بمعالجة حجم كبير من المعاملات بتكلفة منخفضة.",
+                faq_a_what_is_multiversx_2: "فكر فيه كدفتر أستاذ رقمي فائق الكفاءة يمكنه التعامل مع العديد من العمليات في وقت واحد ، مما يجعله مثاليًا للتطبيقات المعقدة مثل DeFi و DAOs.",
+                faq_q_what_is_ebuds: "ما هو eBuds؟",
+                faq_a_what_is_ebuds_1: "eBuds هو مجتمع مستقل لامركزي (DAO) مبني على بلوكشين MultiversX. هدفنا هو إنشاء نظام بيئي شامل ومجزٍ حيث يشارك أعضاء المجتمع بنشاط في الحوكمة ، ويستفيدون من الحوافز المرمزة ، ويتفاعلون مع أدوات NFT الفريدة.",
+                faq_a_what_is_ebuds_2: "نهدف إلى تمكين أعضائنا من خلال منحهم صوتًا حقيقيًا في اتجاه المشروع ومشاركة نجاحه.",
+                faq_q_get_started: "كيف يمكنني البدء مع eBuds؟",
+                faq_a_get_started_intro: "لبدء التفاعل مع مشروع eBuds ، ستحتاج عمومًا إلى اتباع الخطوات التالية:",
+                faq_gs_item_wallet: "<strong>احصل على محفظة MultiversX:</strong> ستحتاج إلى محفظة متوافقة للاحتفاظ بالرموز المستندة إلى MultiversX (مثل EGLD و EBUD و LUV) و NFTs. يعد تطبيق <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal</a> الرسمي خيارًا شائعًا.",
+                faq_gs_item_egld: "<strong>احصل على EGLD:</strong> EGLD هي العملة الأصلية لبلوكشين MultiversX ، وتستخدم لرسوم المعاملات. يمكنك الحصول على EGLD من مختلف بورصات العملات المشفرة.",
+                faq_gs_item_tokens: "<strong>احصل على رموز eBuds (EBUD/LUV):</strong> يمكنك عادةً الحصول على رموز EBUD و LUV من البورصات اللامركزية (DEXs) داخل نظام MultiversX البيئي ، مثل <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> أو <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>.",
+                faq_gs_item_nft: "<strong>احصل على eBudsNFT (اختياري ولكن موصى به):</strong> يمنحك امتلاك eBudsNFT حقوق الحوكمة والوصول إلى مكافآت وميزات محددة داخل نظامنا البيئي. يمكنك العثور على NFTs الخاصة بنا على منصات مثل <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> أو أسواق مثل <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a>.",
+                faq_gs_item_community: "<strong>انضم إلى المجتمع:</strong> تفاعل معنا على منصات مثل <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> و <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a> للبقاء على اطلاع دائم وطرح الأسئلة والمشاركة في المناقشات.",
+                faq_gs_item_governance: "<strong>شارك في الحوكمة:</strong> إذا كنت تمتلك eBudsNFTs أو رموز EBUD (حسب قواعد الحوكمة) ، يمكنك المشاركة في مقترحات DAO والتصويت ، عادةً من خلال منصة مثل <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a>.",
+                faq_gs_item_caution: "تأكد دائمًا من أنك تتفاعل مع الروابط الرسمية وكن حذرًا من عمليات الاحتيال. تحقق من موقعنا الرسمي وقنوات المجتمع للحصول على أحدث المعلومات.",
+                faq_q_ebud_luv: "ما هي رموز EBUD و LUV؟",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> هو رمزنا الأساسي للمنفعة والمكافأة. يتم استخدامه للمشاركة في الحوكمة ، ومكافآت التوقيع المساحي (وفقًا لآليات الإصدار الأول ، مع التطور مع الإصدار الثاني) ، وسيتم دمجه في مختلف أدوات النظام البيئي.",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> هو رمزنا الثانوي ، المصمم أساسًا لدعم سيولة EBUD. يلعب دورًا حاسمًا في الحفاظ على أزواج تداول مستقرة وقد يكون له استخدامات مستقبلية لمكافآت الولاء داخل المجتمع.",
+                faq_q_nft_work: "كيف تعمل eBudsNFTs؟",
+                faq_a_nft_work_intro: "eBudsNFTs هي أكثر من مجرد مقتنيات رقمية. إنها تمثل حصتك وعضويتك داخل eBudsDAC.",
+                faq_a_nft_work_gov: "<strong>حقوق الحوكمة:</strong> عادةً ما يمنحك امتلاك NFT حق التصويت في قرارات DAO.",
+                faq_a_nft_work_rewards: "<strong>أهلية المكافأة:</strong> كان حاملو NFT مؤهلين للحصول على مكافآت رمز EBUD بموجب نظام الإصدار الأول. قد تتطور آليات المكافأة مع الإصدار الثاني والتطورات المستقبلية.",
+                faq_a_nft_work_access: "<strong>وصول حصري:</strong> يمكن لـ NFTs توفير الوصول إلى قنوات المجتمع الخاصة أو الأحداث أو الميزات.",
+                faq_a_nft_work_outro: "كل NFT هو أصل رقمي فريد على بلوكشين MultiversX ، يوفر كلاً من المنفعة وهوية مميزة داخل نظامنا البيئي.",
+                faq_back_to_main: "← العودة إلى الموقع الرئيسي"
+            },
+            ro: { // Romanian Translations
+                faq_main_title: "Întrebări Frecvente (FAQ)",
+                faq_q_what_is_multiversx: "Ce este MultiversX?",
+                faq_a_what_is_multiversx_1: "MultiversX (anterior Elrond) este o platformă blockchain extrem de scalabilă, rapidă și sigură pentru aplicații distribuite, cazuri de utilizare enterprise și noua economie a internetului. Este cunoscută pentru tehnologia sa inovatoare \"Adaptive State Sharding\", care îi permite să proceseze un volum mare de tranzacții la un cost redus.",
+                faq_a_what_is_multiversx_2: "Gândiți-vă la el ca la un registru digital super-eficient care poate gestiona multe operațiuni simultan, făcându-l ideal pentru aplicații complexe precum DeFi și DAO-uri.",
+                faq_q_what_is_ebuds: "Ce este eBuds?",
+                faq_a_what_is_ebuds_1: "eBuds este o Comunitate Autonomă Descentralizată (DAO) construită pe blockchain-ul MultiversX. Scopul nostru este de a crea un ecosistem incluziv și recompensator în care membrii comunității participă activ la guvernanță, beneficiază de stimulente tokenizate și interacționează cu utilități NFT unice.",
+                faq_a_what_is_ebuds_2: "Ne propunem să împuternicim membrii noștri, oferindu-le o voce reală în direcția proiectului și împărtășind succesul acestuia.",
+                faq_q_get_started: "Cum pot începe cu eBuds?",
+                faq_a_get_started_intro: "Pentru a începe să interacționați cu proiectul eBuds, în general va trebui să urmați acești pași:",
+                faq_gs_item_wallet: "<strong>Obțineți un portofel MultiversX:</strong> Veți avea nevoie de un portofel compatibil pentru a deține token-uri bazate pe MultiversX (cum ar fi EGLD, EBUD, LUV) și NFT-uri. Aplicația oficială <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal</a> este o alegere populară.",
+                faq_gs_item_egld: "<strong>Achiziționați EGLD:</strong> EGLD este moneda nativă a blockchain-ului MultiversX, utilizată pentru taxele de tranzacție. Puteți achiziționa EGLD de pe diverse burse de criptomonede.",
+                faq_gs_item_tokens: "<strong>Obțineți Token-uri eBuds (EBUD/LUV):</strong> De obicei, puteți achiziționa token-uri EBUD și LUV pe burse descentralizate (DEX) din cadrul ecosistemului MultiversX, cum ar fi <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> sau <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>.",
+                faq_gs_item_nft: "<strong>Achiziționați un eBudsNFT (Opțional, dar recomandat):</strong> Deținerea unui eBudsNFT vă acordă drepturi de guvernanță și acces la recompense și caracteristici specifice în cadrul ecosistemului nostru. Puteți găsi NFT-urile noastre pe platforme precum <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> sau piețe precum <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a>.",
+                faq_gs_item_community: "<strong>Alăturați-vă Comunității:</strong> Interacționați cu noi pe platforme precum <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> și <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a> pentru a fi la curent, a pune întrebări și a participa la discuții.",
+                faq_gs_item_governance: "<strong>Participați la Guvernanță:</strong> Dacă dețineți eBudsNFT-uri sau token-uri EBUD (în funcție de regulile de guvernanță), puteți participa la propunerile și voturile DAO, de obicei printr-o platformă precum <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a>.",
+                faq_gs_item_caution: "Asigurați-vă întotdeauna că interacționați cu linkurile oficiale și fiți prudenți la escrocherii. Verificați site-ul nostru oficial și canalele comunitare pentru cele mai actualizate informații.",
+                faq_q_ebud_luv: "Ce sunt token-urile EBUD și LUV?",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> este token-ul nostru principal de utilitate și recompensă. Este utilizat pentru participarea la guvernanță, recompense de staking (conform mecanicii v.1, evoluând cu v.2) și va fi integrat în diverse utilități ale ecosistemului.",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> este token-ul nostru secundar, conceput în principal pentru a sprijini lichiditatea EBUD. Joacă un rol crucial în menținerea perechilor de tranzacționare stabile și poate avea utilizări viitoare pentru recompense de loialitate în cadrul comunității.",
+                faq_q_nft_work: "Cum funcționează eBudsNFT-urile?",
+                faq_a_nft_work_intro: "eBudsNFT-urile sunt mai mult decât simple obiecte de colecție digitale. Ele reprezintă miza și calitatea dvs. de membru în cadrul eBudsDAC.",
+                faq_a_nft_work_gov: "<strong>Drepturi de Guvernanță:</strong> Deținerea unui NFT vă acordă de obicei putere de vot în deciziile DAO.",
+                faq_a_nft_work_rewards: "<strong>Eligibilitate pentru Recompense:</strong> Deținătorii de NFT erau eligibili pentru recompense în token-uri EBUD în cadrul sistemului v.1. Mecanismele de recompensare pot evolua odată cu v.2 și dezvoltările viitoare.",
+                faq_a_nft_work_access: "<strong>Acces Exclusiv:</strong> NFT-urile pot oferi acces la canale comunitare speciale, evenimente sau caracteristici.",
+                faq_a_nft_work_outro: "Fiecare NFT este un activ digital unic pe blockchain-ul MultiversX, oferind atât utilitate, cât și o identitate distinctă în cadrul ecosistemului nostru.",
+                faq_back_to_main: "← Înapoi la Site-ul Principal"
+            },
+            zh: { // Chinese (Simplified) Translations
+                faq_main_title: "常见问题解答 (FAQ)",
+                faq_q_what_is_multiversx: "什么是 MultiversX？",
+                faq_a_what_is_multiversx_1: "MultiversX（前身为 Elrond）是一个高度可扩展、快速且安全的区块链平台，适用于分布式应用程序、企业用例和新的互联网经济。它以其创新的“自适应状态分片”技术而闻名，该技术使其能够以低成本处理大量交易。",
+                faq_a_what_is_multiversx_2: "可以把它想象成一个超高效的数字账本，可以同时处理许多操作，非常适合 DeFi 和 DAO 等复杂应用。",
+                faq_q_what_is_ebuds: "什么是 eBuds？",
+                faq_a_what_is_ebuds_1: "eBuds 是一个建立在 MultiversX 区块链上的去中心化自治社区 (DAO)。我们的目标是创建一个包容且有益的生态系统，社区成员可以积极参与治理，从代币化激励中受益，并与独特的 NFT 实用程序互动。",
+                faq_a_what_is_ebuds_2: "我们旨在通过让成员在项目方向上有真正的发言权并分享其成功来赋能他们。",
+                faq_q_get_started: "我如何开始使用 eBuds？",
+                faq_a_get_started_intro: "要开始与 eBuds 项目互动，您通常需要执行以下步骤：",
+                faq_gs_item_wallet: "<strong>获取 MultiversX 钱包：</strong>您需要一个兼容的钱包来持有基于 MultiversX 的代币（如 EGLD、EBUD、LUV）和 NFT。官方 <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal 应用</a>是一个受欢迎的选择。",
+                faq_gs_item_egld: "<strong>获取 EGLD：</strong>EGLD 是 MultiversX 区块链的原生货币，用于支付交易费用。您可以从各种加密货币交易所获取 EGLD。",
+                faq_gs_item_tokens: "<strong>获取 eBuds 代币 (EBUD/LUV)：</strong>您通常可以在 MultiversX 生态系统内的去中心化交易所 (DEX) 上获取 EBUD 和 LUV 代币，例如 <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> 或 <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>。",
+                faq_gs_item_nft: "<strong>获取 eBudsNFT（可选但推荐）：</strong>持有 eBudsNFT 可授予您治理权以及访问我们生态系统内特定奖励和功能的权限。您可以在 <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> 等平台或 <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a> 等市场上找到我们的 NFT。",
+                faq_gs_item_community: "<strong>加入社区：</strong>在 <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> 和 <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a> 等平台上与我们互动，以获取最新信息、提问并参与讨论。",
+                faq_gs_item_governance: "<strong>参与治理：</strong>如果您持有 eBudsNFT 或 EBUD 代币（取决于治理规则），您可以参与 DAO 提案和投票，通常通过 <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a> 等平台进行。",
+                faq_gs_item_caution: "始终确保您通过官方链接进行互动，并警惕诈骗。请查看我们的官方网站和社区渠道以获取最新信息。",
+                faq_q_ebud_luv: "什么是 EBUD 和 LUV 代币？",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> 是我们的主要实用和奖励代币。它用于治理参与、质押奖励（根据 v.1 机制，随 v.2 发展）并将集成到各种生态系统实用程序中。",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> 是我们的次要代币，主要用于支持 EBUD 的流动性。它在维持稳定的交易对方面起着至关重要的作用，并且将来可能用于社区内的忠诚度奖励。",
+                faq_q_nft_work: "eBudsNFT 如何运作？",
+                faq_a_nft_work_intro: "eBudsNFT 不仅仅是数字收藏品。它们代表您在 eBudsDAC 中的股份和成员资格。",
+                faq_a_nft_work_gov: "<strong>治理权：</strong>持有 NFT 通常会授予您在 DAO 决策中的投票权。",
+                faq_a_nft_work_rewards: "<strong>奖励资格：</strong>根据 v.1 系统，NFT 持有者有资格获得 EBUD 代币奖励。奖励机制可能会随着 v.2 和未来的发展而演变。",
+                faq_a_nft_work_access: "<strong>独家访问权限：</strong>NFT 可以提供对特殊社区渠道、活动或功能的访问权限。",
+                faq_a_nft_work_outro: "每个 NFT 都是 MultiversX 区块链上的独特数字资产，在我们的生态系统中提供实用性和独特的身份。",
+                faq_back_to_main: "← 返回主站"
+            },
+            ja: { // Japanese Translations
+                faq_main_title: "よくある質問 (FAQ)",
+                faq_q_what_is_multiversx: "MultiversX とは？",
+                faq_a_what_is_multiversx_1: "MultiversX（旧 Elrond）は、分散型アプリ、エンタープライズユースケース、新しいインターネット経済のための、高度にスケーラブルで高速かつ安全なブロックチェーンプラットフォームです。革新的な「アダプティブステートシャーディング」技術で知られており、これにより大量のトランザクションを低コストで処理できます。",
+                faq_a_what_is_multiversx_2: "これは、多くの操作を同時に処理できる超効率的なデジタル台帳と考えてください。DeFi や DAO などの複雑なアプリケーションに最適です。",
+                faq_q_what_is_ebuds: "eBuds とは？",
+                faq_a_what_is_ebuds_1: "eBuds は、MultiversX ブロックチェーン上に構築された分散型自律コミュニティ (DAO) です。私たちの目標は、コミュニティメンバーがガバナンスに積極的に参加し、トークン化されたインセンティブから利益を得て、独自の NFT ユーティリティを利用できる、包括的でやりがいのあるエコシステムを作成することです。",
+                faq_a_what_is_ebuds_2: "私たちは、プロジェクトの方向性についてメンバーに真の意見を表明する機会を与え、その成功を共有することでメンバーを力づけることを目指しています。",
+                faq_q_get_started: "eBuds を始めるにはどうすればよいですか？",
+                faq_a_get_started_intro: "eBuds プロジェクトとのやり取りを開始するには、通常、次の手順に従う必要があります。",
+                faq_gs_item_wallet: "<strong>MultiversX ウォレットを入手する：</strong>MultiversX ベースのトークン（EGLD、EBUD、LUV など）および NFT を保持するには、互換性のあるウォレットが必要です。公式の <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal アプリ</a>が人気です。",
+                faq_gs_item_egld: "<strong>EGLD を入手する：</strong>EGLD は MultiversX ブロックチェーンのネイティブ通貨であり、取引手数料に使用されます。さまざまな暗号通貨取引所で EGLD を入手できます。",
+                faq_gs_item_tokens: "<strong>eBuds トークン (EBUD/LUV) を入手する：</strong>通常、MultiversX エコシステム内の分散型取引所 (DEX) で EBUD および LUV トークンを入手できます。たとえば、<a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> や <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a> などです。",
+                faq_gs_item_nft: "<strong>eBudsNFT を取得する（任意ですが推奨）：</strong>eBudsNFT を保有すると、ガバナンス権が付与され、エコシステム内の特定の報酬や機能にアクセスできます。NFT は <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a> などのプラットフォームや <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a> などのマーケットプレイスで見つけることができます。",
+                faq_gs_item_community: "<strong>コミュニティに参加する：</strong><a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> や <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a> などのプラットフォームで私たちと交流し、最新情報を入手し、質問をしたり、ディスカッションに参加したりしてください。",
+                faq_gs_item_governance: "<strong>ガバナンスに参加する：</strong>eBudsNFT または EBUD トークンを保有している場合（ガバナンスルールによります）、通常 <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a> などのプラットフォームを通じて DAO の提案や投票に参加できます。",
+                faq_gs_item_caution: "常に公式リンクを介してやり取りしていることを確認し、詐欺に注意してください。最新情報については、公式ウェブサイトとコミュニティチャネルを確認してください。",
+                faq_q_ebud_luv: "EBUD および LUV トークンとは何ですか？",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span> は、当社の主要なユーティリティおよび報酬トークンです。ガバナンスへの参加、ステーキング報酬（v.1 の仕組みに準拠し、v.2 で進化）、さまざまなエコシステムユーティリティへの統合に使用されます。",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span> は、主に EBUD の流動性をサポートするために設計されたセカンダリトークンです。安定した取引ペアを維持する上で重要な役割を果たし、将来的にはコミュニティ内でのロイヤルティ報酬に使用される可能性があります。",
+                faq_q_nft_work: "eBudsNFT はどのように機能しますか？",
+                faq_a_nft_work_intro: "eBudsNFT は単なるデジタル収集品ではありません。eBudsDAC 内でのあなたの利害関係とメンバーシップを表します。",
+                faq_a_nft_work_gov: "<strong>ガバナンス権：</strong>NFT を保有すると、通常 DAO の決定において投票権が付与されます。",
+                faq_a_nft_work_rewards: "<strong>報酬資格：</strong>NFT 保有者は、v.1 システムの下で EBUD トークン報酬の対象でした。報酬メカニズムは、v.2 および将来の開発とともに進化する可能性があります。",
+                faq_a_nft_work_access: "<strong>限定アクセス：</strong>NFT は、特別なコミュニティチャネル、イベント、または機能へのアクセスを提供できます。",
+                faq_a_nft_work_outro: "各 NFT は MultiversX ブロックチェーン上の独自のデジタル資産であり、エコシステム内でユーティリティと明確なアイデンティティの両方を提供します。",
+                faq_back_to_main: "← メインサイトに戻る"
+            },
+            ko: { // Korean Translations
+                faq_main_title: "자주 묻는 질문 (FAQ)",
+                faq_q_what_is_multiversx: "MultiversX란 무엇인가요?",
+                faq_a_what_is_multiversx_1: "MultiversX(이전 Elrond)는 분산형 앱, 기업용 사례 및 새로운 인터넷 경제를 위한 확장성이 뛰어나고 빠르고 안전한 블록체인 플랫폼입니다. 혁신적인 \"적응형 상태 샤딩\" 기술로 유명하며, 이를 통해 저렴한 비용으로 대량의 트랜잭션을 처리할 수 있습니다.",
+                faq_a_what_is_multiversx_2: "DeFi 및 DAO와 같은 복잡한 애플리케이션에 이상적인, 동시에 많은 작업을 처리할 수 있는 초효율적인 디지털 원장이라고 생각하면 됩니다.",
+                faq_q_what_is_ebuds: "eBuds란 무엇인가요?",
+                faq_a_what_is_ebuds_1: "eBuds는 MultiversX 블록체인에 구축된 탈중앙화 자율 커뮤니티(DAO)입니다. 우리의 목표는 커뮤니티 구성원이 거버넌스에 적극적으로 참여하고, 토큰화된 인센티브의 혜택을 받고, 고유한 NFT 유틸리티와 상호 작용하는 포괄적이고 보람 있는 생태계를 만드는 것입니다.",
+                faq_a_what_is_ebuds_2: "우리는 회원들이 프로젝트 방향에 대해 진정한 목소리를 내고 성공을 공유함으로써 회원들에게 권한을 부여하는 것을 목표로 합니다.",
+                faq_q_get_started: "eBuds를 시작하려면 어떻게 해야 하나요?",
+                faq_a_get_started_intro: "eBuds 프로젝트와 상호 작용을 시작하려면 일반적으로 다음 단계를 따라야 합니다.",
+                faq_gs_item_wallet: "<strong>MultiversX 지갑 받기:</strong> MultiversX 기반 토큰(EGLD, EBUD, LUV 등) 및 NFT를 보관하려면 호환되는 지갑이 필요합니다. 공식 <a href=\"https://xportal.com/app?code=9of4ztzb8v/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xPortal 앱</a>이 인기 있는 선택입니다.",
+                faq_gs_item_egld: "<strong>EGLD 획득:</strong> EGLD는 거래 수수료에 사용되는 MultiversX 블록체인의 기본 통화입니다. 다양한 암호화폐 거래소에서 EGLD를 획득할 수 있습니다.",
+                faq_gs_item_tokens: "<strong>eBuds 토큰(EBUD/LUV) 받기:</strong> 일반적으로 <a href=\"https://xexchange.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xExchange</a> 또는 <a href=\"https://app.jexchange.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Jexchange</a>와 같은 MultiversX 생태계 내의 탈중앙화 거래소(DEX)에서 EBUD 및 LUV 토큰을 획득할 수 있습니다.",
+                faq_gs_item_nft: "<strong>eBudsNFT 획득(선택 사항이지만 권장):</strong> eBudsNFT를 보유하면 거버넌스 권한과 생태계 내 특정 보상 및 기능에 대한 액세스 권한이 부여됩니다. <a href=\"https://xspotlight.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">xSpotlight</a>과 같은 플랫폼이나 <a href=\"https://xoxno.com/collection/BUD-3ee0cf\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">XOXNO</a>와 같은 마켓플레이스에서 NFT를 찾을 수 있습니다.",
+                faq_gs_item_community: "<strong>커뮤니티 가입:</strong> <a href=\"https://discord.com/channels/531741323988828161/1093904270430064674\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Discord</a> 및 <a href=\"https://t.me/ElrondBuds\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">Telegram</a>과 같은 플랫폼에서 우리와 교류하여 최신 정보를 얻고, 질문하고, 토론에 참여하십시오.",
+                faq_gs_item_governance: "<strong>거버넌스 참여:</strong> eBudsNFT 또는 EBUD 토큰을 보유하고 있는 경우(거버넌스 규칙에 따라 다름) 일반적으로 <a href=\"https://peerme.io/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"highlight\">PeerMe</a>와 같은 플랫폼을 통해 DAO 제안 및 투표에 참여할 수 있습니다.",
+                faq_gs_item_caution: "항상 공식 링크를 통해 상호 작용하고 사기에 주의하십시오. 최신 정보는 공식 웹사이트와 커뮤니티 채널을 확인하십시오.",
+                faq_q_ebud_luv: "EBUD 및 LUV 토큰이란 무엇인가요?",
+                faq_a_ebud_luv_ebud: "<span class=\"highlight\">EBUD</span>는 당사의 주요 유틸리티 및 보상 토큰입니다. 거버넌스 참여, 스테이킹 보상(v.1 메커니즘에 따라 v.2로 발전)에 사용되며 다양한 생태계 유틸리티에 통합될 것입니다.",
+                faq_a_ebud_luv_luv: "<span class=\"highlight\">LUV</span>는 주로 EBUD의 유동성을 지원하도록 설계된 당사의 보조 토큰입니다. 안정적인 거래 쌍을 유지하는 데 중요한 역할을 하며 향후 커뮤니티 내에서 충성도 보상에 사용될 수 있습니다.",
+                faq_q_nft_work: "eBudsNFT는 어떻게 작동하나요?",
+                faq_a_nft_work_intro: "eBudsNFT는 단순한 디지털 수집품 그 이상입니다. eBudsDAC 내에서 귀하의 지분과 멤버십을 나타냅니다.",
+                faq_a_nft_work_gov: "<strong>거버넌스 권한:</strong> NFT를 보유하면 일반적으로 DAO 결정에 대한 투표권이 부여됩니다.",
+                faq_a_nft_work_rewards: "<strong>보상 자격:</strong> NFT 보유자는 v.1 시스템에 따라 EBUD 토큰 보상을 받을 수 있었습니다. 보상 메커니즘은 v.2 및 향후 개발에 따라 발전할 수 있습니다.",
+                faq_a_nft_work_access: "<strong>독점 액세스:</strong> NFT는 특별 커뮤니티 채널, 이벤트 또는 기능에 대한 액세스를 제공할 수 있습니다.",
+                faq_a_nft_work_outro: "각 NFT는 MultiversX 블록체인의 고유한 디지털 자산으로, 생태계 내에서 유틸리티와 고유한 정체성을 모두 제공합니다.",
+                faq_back_to_main: "← 메인 사이트로 돌아가기"
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Translation Feature for FAQ page ---
+            const languageSelectorFaq = document.getElementById('language-selector-faq');
+            const translatableFaqElements = document.querySelectorAll('[data-translate-key]');
+
+            function translateFaqPage(language) {
+                translatableFaqElements.forEach(element => {
+                    const key = element.getAttribute('data-translate-key');
+                    if (translations[language] && translations[language][key]) {
+                        element.innerHTML = translations[language][key]; // Use innerHTML to render links
+                    } else if (translations.en && translations.en[key]) { // Fallback to English
+                        element.innerHTML = translations.en[key];
+                    }
+                });
+                document.documentElement.lang = language;
+            }
+
+            if (languageSelectorFaq) {
+                languageSelectorFaq.addEventListener('change', (event) => {
+                    translateFaqPage(event.target.value);
+                });
+                // Initial translation based on the selector's default value
+                translateFaqPage(languageSelectorFaq.value);
+            } else {
+                // Fallback if selector not found (e.g. if page is somehow loaded without nav)
+                translateFaqPage('en');
+            }
+        });
+    </script>
+</body>
+</html>

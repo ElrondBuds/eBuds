@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="assets/logo.png" rel="shortcut icon" type="image/png"/>
+<meta content="097a544e7d7a3c09eaa277b3afcb2893" name="wb:op"/>
+<title>eBuds Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&amp;family=Rajdhani:wght@300;400;600&amp;family=Raleway:wght@400;700&amp;family=Noto+Sans:wght@400;700&amp;family=Noto+Naskh+Arabic:wght@400;700&amp;family=Noto+Sans+JP:wght@400;700&amp;family=Noto+Sans+KR:wght@400;700&amp;family=Noto+Sans+SC:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+<style>
+    /* =====================================
+       Root Variables (Lightpaper Theme Dominant)
+    ====================================== */
+    :root {
+      --neon-green: #00ff9d;
+      --neon-purple: #b700ff;
+      --dark-bg: #030014;
+      --glass-bg-lightpaper: rgba(255, 255, 255, 0.05); 
+      --card-bg-lightpaper: rgba(0, 0, 0, 0.3); 
+      --border-color-lightpaper: rgba(0, 255, 157, 0.2);
+      --text-color-lightpaper: #fff;
+      --highlight-color-lightpaper: var(--neon-green);
+
+      /* Fallbacks or alternative theme vars (less priority now) */
+      --theme-purple-glow: rgba(183, 0, 255, 0.5); 
+      --theme-purple-light: var(--neon-purple); 
+      --theme-purple-medium: #8c00b7; 
+      --theme-purple-dark: #5e007a; 
+      --theme-purple-border: var(--border-color-lightpaper); 
+      /* Custom variable for original dark background, used in JS for Three.js fog */
+      --original-dark-bg: #030014; 
+      --original-neon-green: #00ff9d;
+    }
+
+    /* =====================================
+       Base Styles (Lightpaper Theme)
+    ====================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth; 
+    }
+
+    body {
+      font-family: 'Rajdhani', 'Noto Sans', sans-serif; 
+      background-color: var(--dark-bg);
+      color: var(--text-color-lightpaper);
+      line-height: 1.7; 
+      overflow-x: hidden; 
+    }
+
+    /* Language Specific Font Stacks & Direction */
+    html[lang="ro"] body, html[lang="ro"] .button, html[lang="ro"] #language-selector {
+        font-family: 'Noto Sans', 'Rajdhani', sans-serif;
+    }
+    html[lang="ro"] h1, html[lang="ro"] h2, html[lang="ro"] h3, html[lang="ro"] .themed-h1, html[lang="ro"] .themed-h2, html[lang="ro"] .themed-h3,
+    html[lang="ro"] .nav-links a, html[lang="ro"] .footer-link-group h4 {
+        font-family: 'Noto Sans', 'Orbitron', sans-serif;
+    }
+
+    html[lang="ar"] { direction: rtl; }
+    html[lang="ar"] body, html[lang="ar"] .button, html[lang="ar"] #language-selector,
+    html[lang="ar"] h1, html[lang="ar"] h2, html[lang="ar"] h3, html[lang="ar"] .themed-h1, html[lang="ar"] .themed-h2, html[lang="ar"] .themed-h3,
+    html[lang="ar"] .nav-links a, html[lang="ar"] .footer-link-group h4 {
+        font-family: 'Noto Naskh Arabic', 'Noto Sans', sans-serif;
+    }
+    html[lang="zh"] body, html[lang="zh"] .button, html[lang="zh"] #language-selector,
+    html[lang="zh"] h1, html[lang="zh"] h2, html[lang="zh"] h3, html[lang="zh"] .themed-h1, html[lang="zh"] .themed-h2, html[lang="zh"] .themed-h3,
+    html[lang="zh"] .nav-links a, html[lang="zh"] .footer-link-group h4 {
+        font-family: 'Noto Sans SC', 'Noto Sans', sans-serif;
+    }
+    html[lang="ja"] body, html[lang="ja"] .button, html[lang="ja"] #language-selector,
+    html[lang="ja"] h1, html[lang="ja"] h2, html[lang="ja"] h3, html[lang="ja"] .themed-h1, html[lang="ja"] .themed-h2, html[lang="ja"] .themed-h3,
+    html[lang="ja"] .nav-links a, html[lang="ja"] .footer-link-group h4 {
+        font-family: 'Noto Sans JP', 'Noto Sans', sans-serif;
+    }
+    html[lang="ko"] body, html[lang="ko"] .button, html[lang="ko"] #language-selector,
+    html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] .themed-h1, html[lang="ko"] .themed-h2, html[lang="ko"] .themed-h3,
+    html[lang="ko"] .nav-links a, html[lang="ko"] .footer-link-group h4 {
+        font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;
+    }
+
+
+    /* =====================================
+       Custom Animations - "Emerge from Tunnel"
+    ====================================== */
+    .section-animate {
+        opacity: 0;
+        transform: scale(0.8) translateY(50px); 
+        transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1s cubic-bezier(0.165, 0.84, 0.44, 1); 
+        will-change: opacity, transform;
+    }
+    .section-animate.visible {
+        opacity: 1;
+        transform: scale(1) translateY(0); 
+    }
+
+    .card-animate { /* Applies to .glass-card and .milestone-card */
+        opacity: 0;
+        transform: translateY(-70px) scale(0.97); /* Drop from top */
+        transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1); 
+        will-change: opacity, transform;
+    }
+    .card-animate.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    
+    @keyframes pulseGlow {
+        0%, 100% { text-shadow: 0 0 10px var(--theme-purple-glow), 0 0 20px rgba(192, 132, 252, 0.5), 0 0 30px rgba(192, 132, 252, 0.3); }
+        50% { text-shadow: 0 0 15px rgba(192, 132, 252, 0.9), 0 0 25px rgba(192, 132, 252, 0.7), 0 0 40px rgba(192, 132, 252, 0.5); }
+    }
+    
+    .main-title-glow {
+        animation: pulseGlow 3s infinite ease-in-out;
+        color: var(--theme-purple-light); 
+    }
+    
+    /* =====================================
+       Three.js Background & Lightpaper Overlay
+    ====================================== */
+    .journey-background { 
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2; 
+    }
+    .background-overlay { 
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(183, 0, 255, 0.1), transparent 35%),
+            radial-gradient(circle at 80% 80%, rgba(0, 255, 157, 0.1), transparent 35%);
+        z-index: -1; 
+    }
+
+
+    /* =====================================
+       Navigation (Adapted to Lightpaper Theme)
+    ====================================== */
+    nav {
+      position: fixed;
+      top: 0; /* Added to explicitly anchor to the top */
+      left: 0; /* Added to explicitly anchor to the left */
+      width: 100%;
+      padding: 0.75rem 1rem; 
+      background: rgba(3, 0, 20, 0.9); 
+      backdrop-filter: blur(10px); 
+      z-index: 1000;
+      border-bottom: 1px solid var(--border-color-lightpaper);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      min-height: 44px; 
+    }
+
+    .nav-left {
+        display: flex;
+        align-items: center; 
+    }
+    .nav-left .logo-link:hover .nav-logo {
+      filter: drop-shadow(0 0 10px var(--neon-green)); 
+    }
+    .nav-logo {
+      height: 38px; 
+      width: auto;
+      transition: filter 0.3s ease;
+      filter: drop-shadow(0 0 5px var(--neon-green)); 
+    }
+        
+    .nav-right {
+        display: flex;
+        align-items: center; 
+        gap: 0.75rem; 
+    }
+
+    .language-selector-container {
+        position: relative;
+    }
+    #language-selector { 
+        background-color: transparent;
+        color: var(--text-color-lightpaper);
+        border: 1px solid var(--border-color-lightpaper);
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        /* font-family is handled by language-specific CSS */
+        font-size: 0.8rem;
+        cursor: pointer;
+        appearance: none; 
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ff9d'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E"); 
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        background-size: 1.2em;
+        padding-right: 2rem; 
+    }
+    #language-selector:hover {
+        border-color: var(--neon-green);
+        box-shadow: 0 0 5px var(--neon-green);
+    }
+    #language-selector option {
+        background-color: var(--dark-bg); 
+        color: var(--text-color-lightpaper);
+    }
+
+
+    .hamburger {
+      display: inline-flex; 
+      flex-direction: column;
+      justify-content: space-around; 
+      align-items: center; 
+      width: 40px;  
+      height: 40px; 
+      cursor: pointer;
+      border: 1px solid transparent; 
+      background: transparent; 
+      padding: 8px; 
+      z-index: 1001;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+    }
+    .hamburger:hover {
+        background-color: rgba(0, 255, 157, 0.1); 
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px; 
+      height: 2.5px; 
+      background: var(--neon-green); 
+      transition: all 0.3s ease;
+      border-radius: 1px; 
+    }
+
+    .hamburger.active span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+    .nav-links {
+      position: absolute;
+      top: calc(100% + 8px); 
+      right: 1rem;
+      width: 280px; 
+      background: rgba(3, 0, 20, 0.98); 
+      border: 1px solid var(--border-color-lightpaper);
+      border-radius: 10px;
+      padding: 1.5rem 1rem; 
+      box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+      opacity: 0;
+      visibility: hidden; 
+      transform: scale(0.95) translateY(-10px); 
+      transform-origin: top right;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0.3s;
+      z-index: 999;
+    }
+    .nav-links.active { 
+      transform: scale(1) translateY(0); 
+      opacity: 1; 
+      visibility: visible;
+      transition-delay: 0s, 0s, 0s;
+    }
+    .nav-links li { margin-bottom: 0.75rem; list-style: none; }
+    .nav-links li:last-child { margin-bottom: 0; }
+
+    .nav-links a {
+      /* font-family is handled by language-specific CSS */
+      color: var(--text-color-lightpaper);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1.5px; 
+      font-size: 0.9rem; 
+      padding: 0.5rem 0.25rem;
+      display: block; 
+      border-radius: 4px;
+      transition: color 0.3s ease, text-shadow 0.3s ease, background-color 0.2s ease;
+    }
+    .nav-links a:hover {
+      color: var(--neon-green);
+      text-shadow: 0 0 8px var(--neon-green);
+      background-color: rgba(0, 255, 157, 0.1);
+    }
+     /* Stil pentru butonul Connect - similar cu celelalte link-uri din navigare */
+    .nav-links a.connect-button {
+        /* Puteți adăuga stiluri specifice dacă doriți să iasă în evidență */
+        /* De exemplu, o culoare de fundal diferită la hover sau un chenar */
+    }
+
+
+    /* =====================================
+       Headings (Lightpaper Theme)
+    ====================================== */
+    h1, h2, h3, .themed-h1, .themed-h2, .themed-h3 { 
+      /* font-family is handled by language-specific CSS or body default */
+      background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem; 
+      line-height: 1.3;
+      letter-spacing: 1px; 
+    }
+    
+    .hero-content h1, .main-title-glow { 
+        font-size: 2.8rem; 
+        text-shadow: none; 
+        -webkit-text-fill-color: transparent !important; 
+         animation: pulseGlow 3s infinite ease-in-out; 
+    }
+     section.content-area > h2, .themed-h2 { 
+        font-size: 2.2rem; 
+        font-weight: 700;
+        padding-bottom: 0.5em;
+        border-bottom: 1px solid var(--border-color-lightpaper);
+        text-align: center; 
+        margin-bottom: 2rem; 
+        -webkit-text-fill-color: transparent !important;
+    }
+     .glass-card h3, .milestone-card h3, .themed-h3 { 
+        font-size: 1.6em;
+        color: var(--neon-green); 
+        -webkit-text-fill-color: var(--neon-green) !important; 
+        background: none !important; 
+        margin-bottom: 0.8em;
+    }
+
+
+    /* =====================================
+       Hero (Adapted to Lightpaper Theme)
+    ====================================== */
+    header.hero-section { 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center; 
+      text-align: center; 
+      position: relative;
+      overflow: hidden;
+      padding-top: 80px; 
+      background-color: transparent; 
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px; 
+      padding: 1rem;
+    }
+    .hero-content .logo {
+      display: block; 
+      margin-left: auto; 
+      margin-right: auto; 
+      width: 150px; 
+      height: auto;
+      margin-bottom: 2rem; 
+      filter: drop-shadow(0 0 15px var(--neon-green)); 
+    }
+    
+    .hero-content .hero-link { 
+        /* font-family is handled by language-specific CSS or body default */
+        font-size: 1.5rem;
+        color: var(--text-color-lightpaper); 
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 3px;
+    }
+    .hero-content .hero-link:hover {
+        color: var(--neon-green);
+        text-shadow: 0 0 10px var(--neon-green);
+    }
+    .hero-content .hero-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--neon-green); 
+        transform: scaleX(0.5);
+        opacity: 0;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    .hero-content .hero-link:hover::after {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+
+    /* =====================================
+       "Our Journey" Section Styles (Adapted to Lightpaper Theme)
+    ====================================== */
+    #our-journey {
+        text-align: center;
+        background-color: rgba(3, 0, 20, 0.6); 
+        border-top: 1px solid var(--border-color-lightpaper);
+        padding-top: 3rem; 
+        padding-bottom: 2rem; 
+        position: relative; 
+        overflow: hidden; 
+        min-height: 50vh; 
+    }
+    #our-journey .themed-h2 { 
+        margin-bottom: 2.5rem; 
+    }
+    #milestone-stack-container {
+        display: flex;
+        flex-direction: column; 
+        align-items: center; 
+        gap: 1.5rem; 
+        position: relative;
+        width: 100%;
+        max-width: 700px; 
+        margin: 0 auto;
+    }
+    .milestone-card {
+        background: var(--glass-bg-lightpaper); 
+        backdrop-filter: blur(8px); 
+        border: 1px solid var(--border-color-lightpaper); 
+        border-radius: 15px; 
+        padding: 1.5rem 2rem; 
+        color: var(--text-color-lightpaper); 
+        font-family: 'Raleway', 'Noto Sans', sans-serif; 
+        font-size: 1.05rem; 
+        line-height: 1.6;
+        width: 100%; 
+        box-shadow: 0 0 20px rgba(0, 255, 157, 0.15); 
+    }
+
+
+    /* =====================================
+       Content Sections & Cards (Adapted to Lightpaper Theme)
+    ====================================== */
+    section.content-area { 
+      padding: 4rem 1.5rem; 
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .glass-card {
+      background: var(--glass-bg-lightpaper); 
+      backdrop-filter: blur(10px); 
+      border: 1px solid var(--border-color-lightpaper); 
+      border-radius: 15px; 
+      padding: 2rem; 
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 260px; 
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 15px rgba(0, 255, 157, 0.1); 
+    }
+    .glass-card p {
+        color: var(--text-color-lightpaper); 
+        margin-bottom: 1.5rem;
+        flex-grow: 1; 
+    }
+
+    .button { 
+      display: inline-block;
+      padding: 0.9rem 1.8rem;
+      /* font-family is handled by language-specific CSS or body default */
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-decoration: none;
+      color: var(--text-color-lightpaper);
+      background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+      border: none;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 255, 157, 0.3); 
+      position: relative;
+      margin-top: 1rem; 
+    }
+    .button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 0 25px var(--neon-green);
+      text-decoration: none;
+    }
+    .button::after { 
+      content: ' ↗';
+      margin-left: 0.3rem;
+      font-size: 1em;
+      transition: transform 0.3s ease;
+    }
+     .button:hover::after {
+        transform: translateX(3px);
+     }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+      gap: 2rem; 
+      margin-top: 2rem;
+    }
+    .links-grid { 
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    /* =====================================
+       Footer (Adapted to Lightpaper Theme)
+    ====================================== */
+    footer {
+      text-align: center;
+      padding: 3rem 1rem 2rem 1rem; 
+      background-color: rgba(3,0,20, 0.8); 
+      border-top: 1px solid var(--border-color-lightpaper);
+      margin-top: 3rem; 
+      opacity: 1; 
+      visibility: visible; 
+      transform: translateY(0); 
+      will-change: auto; 
+    }
+    .footer-content {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .footer-links-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem; 
+        margin-bottom: 2.5rem;
+    }
+    .footer-link-group {
+        min-width: 150px; 
+    }
+    .footer-link-group h4 { 
+        /* font-family is handled by language-specific CSS or body default */
+        background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 1.2rem; 
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .footer-link-group ul {
+        list-style: none;
+        padding: 0;
+    }
+    .footer-link-group ul li a {
+        color: var(--text-color-lightpaper);
+        text-decoration: none;
+        font-size: 0.9rem;
+        padding: 0.3rem 0;
+        display: inline-block;
+        transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+    .footer-link-group ul li a:hover {
+        color: var(--neon-green);
+        text-shadow: 0 0 5px var(--neon-green);
+    }
+    .social-icons {
+        margin-bottom: 2.5rem;
+    }
+    .social-icons a {
+        color: var(--neon-green); 
+        font-size: 1.8rem; 
+        margin: 0 0.75rem;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+    .social-icons a:hover {
+        color: var(--neon-purple); 
+        transform: scale(1.1);
+    }
+    footer .copyright { 
+      color: var(--text-color-lightpaper); 
+      font-size: 0.85rem;
+    }
+
+
+    /* =====================================
+       Mobile Responsiveness
+    ====================================== */
+    @media (max-width: 768px) {
+      body { padding: 0 10px; padding-top: 70px; }
+      nav { padding: 0.5rem 1rem; }
+      .nav-container { /* Removed grid-template-columns for default flex behavior */ }
+      .nav-right { gap: 0.5rem; }
+      #language-selector {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+        padding-right: 1.8rem; 
+        background-size: 1em;
+      }
+      .nav-links {
+        width: 260px; 
+        right: 0.5rem; 
+      }
+      section.content-area,
+      .hero-content,
+      #our-journey { 
+        width: 95%; 
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+       #our-journey .milestone-card { 
+        padding: 1.25rem 1.5rem;
+        font-size: 0.95rem;
+      }
+      .hero-content h1 {
+        font-size: 2.2rem;
+      }
+      .hero-content .hero-link {
+        font-size: 1.2rem;
+      }
+      .grid-container {
+        grid-template-columns: 1fr; 
+      }
+       .links-grid {
+        grid-template-columns: 1fr; 
+      }
+      .footer-links-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+      .footer-link-group {
+        text-align: center;
+      }
+    }
+  
+/* Desktop vs Mobile Connect Button */
+.nav-top-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.connect-button-desktop {
+  color: hsl(var(--text-color));
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid hsl(var(--border-color));
+  border-radius: 6px;
+  background-color: hsl(var(--glass-bg));
+  transition: all 0.3s ease;
+}
+
+.connect-button-desktop:hover {
+  color: hsl(var(--highlight-color));
+  background-color: hsl(var(--highlight-color) / 0.1);
+  box-shadow: 0 0 5px hsl(var(--highlight-color));
+  text-shadow: 0 0 8px hsl(var(--highlight-color));
+}
+
+.connect-button-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .connect-button-desktop {
+    display: none !important;
+  }
+
+  .connect-button-mobile {
+    display: block !important;
+  }
+
+  .nav-top-controls {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+</style>
+</head>
+<body>
+<div class="background-overlay"></div>
+<div class="journey-background"></div>
+<nav>
+<div class="nav-container">
+<div class="nav-left">
+<a class="logo-link" href="#" onclick="window.location.reload();">
+<img alt="eBuds Logo" class="nav-logo" src="assets/logo.png"/>
+</a>
+</div>
+<div class="nav-right"><div class="nav-top-controls"><div class="language-selector-container">
+<select aria-label="Select Language" id="language-selector">
+<option value="en">EN</option>
+<option value="ar">AR</option>
+<option value="zh">ZH</option>
+<option value="de">DE</option>
+<option value="es">ES</option>
+<option value="fr">FR</option>
+<option value="it">IT</option>
+<option value="ja">JA</option>
+<option value="ko">KO</option>
+<option value="ro">RO</option>
+</select>
+</div><a class="connect-button-desktop" data-translate-key="nav_connect" href="wallet.html" id="connect-button-nav">Connect</a></div>
+
+<button class="hamburger">
+<span></span>
+<span></span>
+<span></span>
+</button>
+<ul class="nav-links">
+<li><a data-translate-key="nav_about" href="#about">Despre</a></li>
+<li><a data-translate-key="nav_features" href="#components">Caracteristici</a></li>
+<li><a data-translate-key="nav_find_us" href="#integration">Unde ne găsiți</a></li>
+<li><a data-translate-key="nav_partners" href="#partners">Parteneri</a></li>
+<li><a data-translate-key="nav_journey" href="#our-journey">Călătoria Noastră</a></li>
+<li><a data-translate-key="nav_success" href="#achievements">Succes</a></li>
+<li><a data-translate-key="nav_faq" href="faq.html" target="_blank">FAQ</a></li>
+
+<li><a class="connect-button-mobile" data-translate-key="nav_connect" href="wallet.html">Connect</a></li></ul>
+</div>
+</div>
+</nav>
+<header class="hero-section section-animate">
+<div class="hero-content">
+<img alt="eBuds Logo" class="logo" src="assets/logo.png"/>
+<h1 class="main-title-glow" data-translate-key="hero_title">Bun Venit la eBuds</h1>
+<a class="hero-link" data-translate-key="hero_subtitle" href="lightpaper.html" target="_blank">
+        Construim Împreună Viitorul Finanțelor
+      </a>
+</div>
+</header>
+<section class="content-area section-animate" id="about">
+<h2 class="themed-h2" data-translate-key="about_title">Despre eBuds</h2>
+<div class="glass-card card-animate">
+<p data-translate-key="about_text">
+        eBuds este o comunitate unde ai un cuvânt de spus în modelarea viitorului
+        finanțelor digitale. Construit pe tehnologia MultiversX, oferim o platformă sigură
+        unde fiecare membru poate participa, vota și câștiga recompense.
+      </p>
+<a class="button" data-translate-key="read_more_button" href="lightpaper.html" rel="noopener noreferrer" style="margin-top: 0.5rem;" target="_blank">Citește Mai Mult</a>
+</div>
+</section>
+<section class="content-area section-animate" id="components">
+<h2 class="themed-h2" data-translate-key="features_title">Ce Oferim</h2>
+<div class="grid-container">
+<div class="glass-card card-animate">
+<h3 data-translate-key="feature_community_title">Puterea Comunității</h3>
+<p data-translate-key="feature_community_text">
+          Vocea ta contează în eBuds! Prin PeerMe, platforma noastră DAO, poți propune, discuta și vota decizii cheie ale proiectului, modelând direct viitorul ecosistemului nostru.
+        </p>
+<a class="button" data-translate-key="visit_peerme_button" href="https://peerme.io/ebudsdac" rel="noopener noreferrer" style="margin-top: 0.5rem;" target="_blank">
+          Vizitează PeerMe
+        </a>
+</div>
+<div class="glass-card card-animate">
+<h3 data-translate-key="feature_treasury_title">Trezoreria DAO</h3>
+<p data-translate-key="feature_treasury_text">
+          Trezoreria noastră DAO, gestionată de comunitate prin PeerMe, finanțează în mod transparent inițiativele și proiectele aprobate, asigurând alocarea resurselor pentru a alimenta creșterea și inovația eBuds.
+        </p>
+<a *="" class="button" cu="" către="" dao="" data-translate-key="view_on_explorer_button" exploratorul="" href="https://explorer.multiversx.com/accounts/erd1qqqqqqqqqqqqqpgqq0yx7w5lguw5e5067j2lpl96t5vp3xcu27rswu3eq4" link-ul="" real="" rel="noopener noreferrer" target="_blank" trezoreriei="" înlocuiește="">
+          Vezi pe Explorer
+        </a>
+</div>
+<div class="glass-card card-animate">
+<h3 data-translate-key="feature_ebud_title">Token EBUD</h3>
+<p data-translate-key="feature_ebud_text">
+          Tokenul nostru principal îți oferă acces la beneficii exclusive și oportunități de câștig
+          prin participarea activă în comunitate.
+        </p>
+<a class="button" data-translate-key="view_token_button" href="https://explorer.multiversx.com/tokens/EBUD-d29cce" rel="noopener noreferrer" target="_blank">
+          Vezi Token EBUD
+        </a>
+</div>
+<div class="glass-card card-animate">
+<h3 data-translate-key="feature_luv_title">Token LUV</h3>
+<p data-translate-key="feature_luv_text">
+          Tokenul nostru secundar îți recompensează loialitatea și angajamentul continuu cu
+          avantaje și oportunități speciale.
+        </p>
+<a class="button" data-translate-key="view_token_button" href="https://explorer.multiversx.com/tokens/LUV-310136" rel="noopener noreferrer" target="_blank">
+          Vezi Token LUV
+        </a>
+</div>
+<div class="glass-card card-animate">
+<h3 data-translate-key="feature_nft_title">Colecția NFT</h3>
+<p data-translate-key="feature_nft_text">
+          Artă digitală unică ce aduce beneficii reale: drepturi de vot, recompense,
+          și acces la evenimente exclusive.
+        </p>
+<a class="button" data-translate-key="view_collection_button" href="https://xspotlight.com/collections/BUD-3ee0cf?on-sale=true" rel="noopener noreferrer" target="_blank">
+          Vezi Colecția
+        </a>
+</div>
+</div>
+</section>
+<section class="content-area section-animate" id="integration">
+<h2 class="themed-h2" data-translate-key="find_us_title">Unde Ne Găsiți</h2>
+<div class="glass-card card-animate">
+<p data-translate-key="find_us_text">
+        Tokenurile EBUD și LUV sunt disponibile pe platformele cripto majore, asigurând tranzacții sigure și
+        flexibile:
+      </p>
+<div class="links-grid">
+<a class="button" href="https://xportal.com/app?code=9of4ztzb8v" rel="noopener noreferrer" target="_blank">xPortal</a>
+<a class="button" href="https://xexchange.com/" rel="noopener noreferrer" target="_blank">xExchange</a>
+<a class="button" href="https://app.jexchange.io/" rel="noopener noreferrer" target="_blank">Jexchange</a>
+<a class="button" href="https://onedex.app/" rel="noopener noreferrer" target="_blank">Onedex</a>
+<a class="button" href="https://app.ashswap.io/" rel="noopener noreferrer" target="_blank">Ashswap</a>
+</div>
+</div>
+</section>
+<section class="content-area section-animate" id="partners">
+<h2 class="themed-h2" data-translate-key="partners_title">Partenerii Noștri</h2>
+<div class="grid-container">
+<div class="glass-card card-animate">
+<h3>$HIT Token</h3>
+<p data-translate-key="partner_hit_text">Întoarcem 💩!</p>
+<a class="button" data-translate-key="learn_more_button" href="https://goshit.xyz/" rel="noopener noreferrer" target="_blank">Află Mai Mult</a>
+</div>
+<div class="glass-card card-animate">
+<h3>GhostVerse</h3>
+<p data-translate-key="partner_ghost_text">DAO-ul NFT unde fantomele guvernează.</p>
+<a class="button" data-translate-key="visit_ghostverse_button" href="https://ghostverse.org/" rel="noopener noreferrer" target="_blank">Vizitează GhostVerse</a>
+</div>
+<div class="glass-card card-animate">
+<h3>CROMDAO</h3>
+<p data-translate-key="partner_crom_text">Organizație Autonomă Descentralizată; puterea web3 și colaborarea comunitară.</p>
+<a class="button" data-translate-key="follow_crom_button" href="https://x.com/cromdao" rel="noopener noreferrer" target="_blank">Urmărește CROMDAO</a>
+</div>
+<div class="glass-card card-animate">
+<h3>Plata Network</h3>
+<p data-translate-key="partner_plata_text">Token Pionier MultiversX</p>
+<a class="button" data-translate-key="explore_plata_button" href="https://linktr.ee/plataLinks" rel="noopener noreferrer" target="_blank">Explorează Plata</a>
+</div>
+<div class="glass-card card-animate">
+<h3>BidXBot!</h3>
+<p data-translate-key="partner_bidx_text">Descoperă BUYBOT și MultiversX TRENDING &amp; SIGNALS</p>
+<a class="button" data-translate-key="explore_bidx_button" href="https://bidxbot.com/" rel="noopener noreferrer" target="_blank">Explorează BidXBot!</a>
+</div>
+<div class="glass-card card-animate">
+<h3>Super Victor Universe</h3>
+<p data-translate-key="partner_supervictor_text">Experiențe digitale interactive și produse din lumea reală.</p>
+<a class="button" data-translate-key="enter_universe_button" href="https://linktr.ee/supervictor" rel="noopener noreferrer" target="_blank">Intră în Univers</a>
+</div>
+</div>
+</section>
+<section class="content-area section-animate" id="our-journey">
+<h2 class="themed-h2" data-translate-key="journey_title">Călătoria eBuds</h2>
+<div id="milestone-stack-container">
+</div>
+</section>
+<section class="content-area section-animate" id="achievements">
+<h2 class="themed-h2" data-translate-key="success_title">Succesul Nostru</h2>
+<div class="glass-card card-animate">
+<p data-translate-key="success_text">
+        Am construit o comunitate înfloritoare, am lansat cu succes tokenurile noastre,
+        și am creat sisteme de recompensare funcționale. Planurile noastre de viitor includ noi
+        beneficii pentru membri și extinderea pe mai multe platforme partenere.
+      </p>
+</div>
+</section>
+<footer>
+<div class="footer-content">
+<div class="footer-links-container">
+<div class="footer-link-group">
+<h4 data-translate-key="footer_navigate">Navigare</h4>
+<ul>
+<li><a data-translate-key="nav_about" href="#about">Despre</a></li>
+<li><a data-translate-key="nav_features" href="#components">Caracteristici</a></li>
+<li><a data-translate-key="nav_journey" href="#our-journey">Călătoria Noastră</a></li>
+<li><a data-translate-key="footer_lightpaper" href="lightpaper.html" target="_blank">Lightpaper</a></li>
+</ul>
+</div>
+<div class="footer-link-group">
+<h4 data-translate-key="footer_community">Comunitate</h4>
+<ul>
+<li><a data-translate-key="footer_discord" href="https://discord.com/channels/531741323988828161/1093904270430064674" rel="noopener noreferrer" target="_blank">Discord</a></li>
+<li><a data-translate-key="footer_telegram" href="https://t.me/ElrondBuds" rel="noopener noreferrer" target="_blank">Telegram</a></li>
+<li><a data-translate-key="footer_peerme" href="https://peerme.io/" rel="noopener noreferrer" target="_blank">PeerMe (DAO)</a></li>
+</ul>
+</div>
+<div class="footer-link-group">
+<h4 data-translate-key="footer_resources">Resurse</h4>
+<ul>
+<li><a data-translate-key="footer_support" href="https://t.me/ElrondBuds" rel="noopener noreferrer" target="_blank">Suport</a></li>
+<li><a data-translate-key="footer_faq" href="faq.html">FAQ</a></li>
+<li><a data-translate-key="footer_contact" href="mailto:elrondbuds@gmail.com">Contactează-ne</a></li>
+</ul>
+</div>
+</div>
+<div class="social-icons">
+<a aria-label="Twitter / X" href="https://x.com/eBudsNFT" rel="noopener noreferrer" target="_blank"><i class="fab fa-twitter"></i></a>
+<a aria-label="Telegram" href="https://t.me/ElrondBuds" rel="noopener noreferrer" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+<a aria-label="Discord" href="https://discord.com/channels/531741323988828161/1093904270430064674" rel="noopener noreferrer" target="_blank"><i class="fab fa-discord"></i></a>
+<a aria-label="Medium" href="https://ebuds.medium.com/" rel="noopener noreferrer" target="_blank"><i class="fab fa-medium-m"></i></a>
+</div>
+<p class="copyright" data-translate-key="footer_copyright">© <span id="currentYear">2024</span> eBuds Project. Toate drepturile rezervate.</p>
+</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.157.0/three.min.js"></script>
+<script>
+    // Setează anul curent în copyright
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    
+    // --- Date și funcții pentru traducere ---
+    const translations = {
+        en: {
+            nav_about: "About", nav_features: "Features", nav_find_us: "Where to Find Us", nav_partners: "Partners", nav_journey: "Our Journey", nav_success: "Success", nav_faq: "FAQ", nav_connect: "Connect", // Cheie nouă pentru Connect
+            hero_title: "Welcome to eBuds", hero_subtitle: "Building the Future of Finance Together",
+            about_title: "About eBuds", about_text: "eBuds is a community where you have a voice in shaping the future of digital finance. Built on MultiversX technology, we offer a secure platform where every member can participate, vote, and earn rewards.", read_more_button: "Read More",
+            features_title: "What We Offer", 
+            feature_community_title: "Community Power", feature_community_text: "Your voice matters in eBuds! Through PeerMe, our DAO platform, you can propose, discuss, and vote on key project decisions, directly shaping the future of our ecosystem.", visit_peerme_button: "Visit PeerMe", 
+            feature_treasury_title: "DAO Treasury", feature_treasury_text: "Our DAO Treasury, managed by the community through PeerMe, transparently funds approved initiatives and projects, ensuring resources are allocated to fuel eBuds' growth and innovation.", view_on_explorer_button: "View on Explorer",
+            feature_ebud_title: "EBUD Token", feature_ebud_text: "Our main token gives you access to exclusive benefits and earning opportunities through active community participation.", view_token_button: "View Token", feature_luv_title: "LUV Token", feature_luv_text: "Our secondary token rewards your loyalty and ongoing engagement with special perks and opportunities.", feature_nft_title: "NFT Collection", feature_nft_text: "Unique digital art that brings real benefits: voting rights, rewards, and access to exclusive events.", view_collection_button: "View Collection",
+            find_us_title: "Where to Find Us", find_us_text: "EBUD and LUV tokens are available on major crypto platforms, ensuring safe and flexible transactions:",
+            partners_title: "Our Partners", partner_hit_text: "We're turning 💩 around!", partner_ghost_text: "The NFT DAO where ghosts govern.", partner_crom_text: "Decentralized Autonomous Organization; the power of web3 and community collaboration.", partner_plata_text: "Pioneer MultiversX Token", partner_bidx_text: "Discover BUYBOT and MultiversX TRENDING & SIGNALS", partner_supervictor_text: "Interactive digital experiences & real-world products.", learn_more_button: "Learn More", visit_ghostverse_button: "Visit GhostVerse", follow_crom_button: "Follow CROMDAO", explore_plata_button: "Explore Plata", explore_bidx_button: "Explore BidXBot!", enter_universe_button: "Enter Universe",
+            journey_title: "The eBuds Journey", success_title: "Our Success", success_text: "We've built a thriving community, successfully launched our tokens, and created working reward systems. Our future plans include new member benefits and expanding to more partner platforms.",
+            footer_navigate: "Navigate", footer_lightpaper: "Lightpaper", footer_community: "Community", footer_discord: "Discord", footer_telegram: "Telegram", footer_peerme: "PeerMe (DAO)", footer_resources: "Resources", footer_support: "Support", footer_faq: "FAQ", footer_contact: "Contact Us", footer_copyright: `© ${new Date().getFullYear()} eBuds Project. All rights reserved.`,
+            journey_milestone_0: "The Genesis Block: Our voyage into decentralized frontiers begins, a single spark igniting a universe of possibility.", journey_milestone_1: "MultiversX Nexus: Anchoring in a high-speed, secure ecosystem, we lay the foundation for a revolutionary financial experience.", journey_milestone_2: "The Oracle's Decree: NFTs awaken, no longer mere collectibles, but keys unlocking governance and tangible rewards for the worthy.", journey_milestone_3: "Twin Stars Aligned: EBUD & LUV tokens ignite, a dual-core engine powering a vibrant, participatory economy for all eCitizens.", journey_milestone_4: "Constellation of Allies: Innovators and visionaries join our orbit, forging partnerships that expand our galaxy and amplify our shared mission.", journey_milestone_5: "The Singularity Achieved: eBuds transcends, becoming a true DAO - where the collective consciousness of the community shapes destiny."
+        },
+        es: { /* Traduceri în Spaniolă */
+            nav_about: "Sobre Nosotros", nav_features: "Características", nav_find_us: "Dónde Encontrarnos", nav_partners: "Socios", nav_journey: "Nuestra Trayectoria", nav_success: "Éxito", nav_faq: "FAQ", nav_connect: "Conectar",
+            hero_title: "Bienvenido a eBuds", hero_subtitle: "Construyendo Juntos el Futuro de las Finanzas",
+            about_title: "Sobre eBuds", about_text: "eBuds es una comunidad donde tienes voz para dar forma al futuro de las finanzas digitales. Construido sobre tecnología MultiversX, ofrecemos una plataforma segura donde cada miembro puede participar, votar y ganar recompensas.", read_more_button: "Leer Más",
+            features_title: "Qué Ofrecemos", 
+            feature_community_title: "Poder Comunitario", feature_community_text: "¡Tu voz importa en eBuds! A través de PeerMe, nuestra plataforma DAO, puedes proponer, discutir y votar sobre decisiones clave del proyecto, moldeando directamente el futuro de nuestro ecosistema.", visit_peerme_button: "Visitar PeerMe", 
+            feature_treasury_title: "Tesorería DAO", feature_treasury_text: "Nuestra Tesorería DAO, gestionada por la comunidad a través de PeerMe, financia de forma transparente iniciativas y proyectos aprobados, asegurando que los recursos se asignen para impulsar el crecimiento e innovación de eBuds.", view_on_explorer_button: "Ver en Explorador",
+            feature_ebud_title: "Token EBUD", feature_ebud_text: "Nuestro token principal te da acceso a beneficios exclusivos y oportunidades de ganancia a través de la participación activa de la comunidad.", view_token_button: "Ver Token", feature_luv_title: "Token LUV", feature_luv_text: "Nuestro token secundario recompensa tu lealtad y compromiso continuo con ventajas y oportunidades especiales.", feature_nft_title: "Colección NFT", feature_nft_text: "Arte digital único que aporta beneficios reales: derechos de voto, recompensas y acceso a eventos exclusivos.", view_collection_button: "Ver Colección",
+            find_us_title: "Dónde Encontrarnos", find_us_text: "Los tokens EBUD y LUV están disponibles en las principales plataformas de cripto, asegurando transacciones seguras y flexibles:",
+            partners_title: "Nuestros Socios", partner_hit_text: "¡Estamos dándole la vuelta a la 💩!", partner_ghost_text: "La DAO NFT donde los fantasmas gobiernan.", partner_crom_text: "Organización Autónoma Descentralizada; el poder de web3 y la colaboración comunitaria.", partner_plata_text: "Token Pionero de MultiversX", partner_bidx_text: "Descubre BUYBOT y MultiversX TRENDING & SIGNALS", partner_supervictor_text: "Experiencias digitales interactivas y productos del mundo real.", learn_more_button: "Saber Más", visit_ghostverse_button: "Visitar GhostVerse", follow_crom_button: "Seguir CROMDAO", explore_plata_button: "Explorar Plata", explore_bidx_button: "Explorar BidXBot!", enter_universe_button: "Entrar al Universo",
+            journey_title: "La Trayectoria de eBuds", success_title: "Nuestro Éxito", success_text: "Hemos construido una comunidad próspera, lanzado con éxito nuestros tokens y creado sistemas de recompensa funcionales. Nuestros planes futuros incluyen nuevos beneficios para miembros y la expansión a más plataformas asociadas.",
+            footer_navigate: "Navegar", footer_lightpaper: "Lightpaper", footer_community: "Comunidad", footer_discord: "Discord", footer_telegram: "Telegram", footer_peerme: "PeerMe (DAO)", footer_resources: "Recursos", footer_support: "Soporte", footer_faq: "FAQ", footer_contact: "Contáctanos", footer_copyright: `© ${new Date().getFullYear()} Proyecto eBuds. Todos los derechos reservados.`,
+            journey_milestone_0: "El Bloque Génesis: Nuestro viaje hacia fronteras descentralizadas comienza, una chispa única encendiendo un universo de posibilidades.", journey_milestone_1: "Nexo MultiversX: Anclándonos en un ecosistema seguro y de alta velocidad, sentamos las bases para una experiencia financiera revolucionaria.", journey_milestone_2: "El Decreto del Oráculo: Los NFTs despiertan, ya no como meros coleccionables, sino como llaves que desbloquean la gobernanza y recompensas tangibles para los dignos.", journey_milestone_3: "Estrellas Gemelas Alineadas: Los tokens EBUD y LUV se encienden, un motor de doble núcleo impulsando una economía vibrante y participativa para todos los eCiudadanos.", journey_milestone_4: "Constelación de Aliados: Innovadores y visionarios se unen a nuestra órbita, forjando alianzas que expanden nuestra galaxia y amplifican nuestra misión compartida.", journey_milestone_5: "La Singularidad Alcanzada: eBuds trasciende, convirtiéndose en una verdadera DAO, donde la conciencia colectiva de la comunidad da forma al destino."
+        },
+        fr: { /* Traduceri în Franceză */
+            nav_about: "À Propos", nav_features: "Fonctionnalités", nav_find_us: "Où Nous Trouver", nav_partners: "Partenaires", nav_journey: "Notre Parcours", nav_success: "Succès", nav_faq: "FAQ", nav_connect: "Connecter",
+            hero_title: "Bienvenue chez eBuds", hero_subtitle: "Construire Ensemble l'Avenir de la Finance",
+            about_title: "À Propos d'eBuds", about_text: "eBuds est une communauté où vous avez une voix pour façonner l'avenir de la finance numérique. Construit sur la technologie MultiversX, nous offrons une plateforme sécurisée où chaque membre peut participer, voter et gagner des récompenses.", read_more_button: "Lire Plus",
+            features_title: "Ce Que Nous Offrons", 
+            feature_community_title: "Pouvoir Communautaire", feature_community_text: "Votre voix compte chez eBuds ! Grâce à PeerMe, notre plateforme DAO, vous pouvez proposer, discuter et voter les décisions clés du projet, façonnant directement l'avenir de notre écosystème.", visit_peerme_button: "Visiter PeerMe",
+            feature_treasury_title: "Trésorerie DAO", feature_treasury_text: "Notre trésorerie DAO, gérée par la communauté via PeerMe, finance de manière transparente les initiatives et projets approuvés, garantissant que les ressources sont allouées pour alimenter la croissance et l'innovation d'eBuds.", view_on_explorer_button: "Voir sur l'Explorateur",
+            feature_ebud_title: "Jeton EBUD", feature_ebud_text: "Notre jeton principal vous donne accès à des avantages exclusifs et à des opportunités de gain grâce à une participation communautaire active.", view_token_button: "Voir Jeton", feature_luv_title: "Jeton LUV", feature_luv_text: "Notre jeton secondaire récompense votre fidélité et votre engagement continu avec des avantages et des opportunités spéciales.", feature_nft_title: "Collection NFT", feature_nft_text: "Art numérique unique qui apporte de réels avantages : droits de vote, récompenses et accès à des événements exclusifs.", view_collection_button: "Voir Collection",
+            find_us_title: "Où Nous Trouver", find_us_text: "Les jetons EBUD et LUV sont disponibles sur les principales plateformes de cryptomonnaies, garantissant des transactions sûres et flexibles :",
+            partners_title: "Nos Partenaires", partner_hit_text: "On retourne la 💩 !", partner_ghost_text: "La DAO NFT où les fantômes gouvernent.", partner_crom_text: "Organisation Autonome Décentralisée ; le pouvoir du web3 et de la collaboration communautaire.", partner_plata_text: "Jeton Pionnier de MultiversX", partner_bidx_text: "Découvrez BUYBOT et MultiversX TRENDING & SIGNALS", partner_supervictor_text: "Expériences numériques interactives et produits du monde réel.", learn_more_button: "En Savoir Plus", visit_ghostverse_button: "Visiter GhostVerse", follow_crom_button: "Suivre CROMDAO", explore_plata_button: "Explorer Plata", explore_bidx_button: "Explorer BidXBot!", enter_universe_button: "Entrer dans l'Univers",
+            journey_title: "Le Parcours eBuds", success_title: "Notre Succès", success_text: "Nous avons bâti une communauté florissante, lancé avec succès nos jetons et créé des systèmes de récompense fonctionnels. Nos plans futurs incluent de nouveaux avantages pour les membres et une expansion vers d'autres plateformes partenaires.",
+            footer_navigate: "Naviguer", footer_lightpaper: "Lightpaper", footer_community: "Communauté", footer_discord: "Discord", footer_telegram: "Télégramme", footer_peerme: "PeerMe (DAO)", footer_resources: "Ressources", footer_support: "Support", footer_faq: "FAQ", footer_contact: "Nous Contacter", footer_copyright: `© ${new Date().getFullYear()} Projet eBuds. Tous droits réservés.`,
+            journey_milestone_0: "Le Bloc Genesis : Notre voyage vers des frontières décentralisées commence, une simple étincelle allumant un univers de possibilités.", journey_milestone_1: "Nexus MultiversX : En nous ancrant dans un écosystème sécurisé et à haute vitesse, nous posons les fondations d'une expérience financière révolutionnaire.", journey_milestone_2: "Le Décret de l'Oracle : Les NFT s'éveillent, non plus comme de simples objets de collection, mais comme des clés déverrouillant la gouvernance et des récompenses tangibles pour les méritants.", journey_milestone_3: "Étoiles Jumelles Alignées : Les jetons EBUD & LUV s'enflamment, un moteur à double cœur alimentant une économie vibrante et participative pour tous les eCitoyens.", journey_milestone_4: "Constellation d'Alliés : Innovateurs et visionnaires rejoignent notre orbite, forgeant des partenariats qui étendent notre galaxie et amplifient notre mission commune.", journey_milestone_5: "La Singularité Atteinte : eBuds transcende, devenant une véritable DAO – où la conscience collective de la communauté façonne le destin."
+        },
+        it: { /* Traduceri în Italiană */
+            nav_about: "Chi Siamo", nav_features: "Caratteristiche", nav_find_us: "Dove Trovarci", nav_partners: "Partner", nav_journey: "Il Nostro Viaggio", nav_success: "Successo", nav_faq: "FAQ", nav_connect: "Connetti",
+            hero_title: "Benvenuto in eBuds", hero_subtitle: "Costruendo Insieme il Futuro della Finanza",
+            about_title: "Chi è eBuds", about_text: "eBuds è una comunità in cui hai voce in capitolo nel plasmare il futuro della finanza digitale. Costruita sulla tecnologia MultiversX, offriamo una piattaforma sicura in cui ogni membro può partecipare, votare e guadagnare ricompense.", read_more_button: "Leggi di Più",
+            features_title: "Cosa Offriamo", 
+            feature_community_title: "Potere della Comunità", feature_community_text: "La tua voce conta in eBuds! Attraverso PeerMe, la nostra piattaforma DAO, puoi proporre, discutere e votare decisioni chiave del progetto, plasmando direttamente il futuro del nostro ecosistema.", visit_peerme_button: "Visita PeerMe",
+            feature_treasury_title: "Tesoreria DAO", feature_treasury_text: "La nostra Tesoreria DAO, gestita dalla comunità tramite PeerMe, finanzia in modo trasparente iniziative e progetti approvati, garantendo che le risorse siano allocate per alimentare la crescita e l'innovazione di eBuds.", view_on_explorer_button: "Vedi su Explorer",
+            feature_ebud_title: "Token EBUD", feature_ebud_text: "Il nostro token principale ti dà accesso a vantaggi esclusivi e opportunità di guadagno attraverso la partecipazione attiva della comunità.", view_token_button: "Vedi Token", feature_luv_title: "Token LUV", feature_luv_text: "Il nostro token secondario premia la tua lealtà e il tuo impegno continuo con vantaggi e opportunità speciali.", feature_nft_title: "Collezione NFT", feature_nft_text: "Arte digitale unica che apporta benefici reali: diritti di voto, ricompense e accesso a eventi esclusivi.", view_collection_button: "Vedi Collezione",
+            find_us_title: "Dove Trovarci", find_us_text: "I token EBUD e LUV sono disponibili sulle principali piattaforme crittografiche, garantendo transazioni sicure e flessibili:",
+            partners_title: "I Nostri Partner", partner_hit_text: "Stiamo ribaltando la 💩!", partner_ghost_text: "La DAO NFT dove i fantasmi governano.", partner_crom_text: "Organizzazione Autonoma Decentralizzata; il potere del web3 e della collaborazione comunitaria.", partner_plata_text: "Token Pioniere di MultiversX", partner_bidx_text: "Scopri BUYBOT e MultiversX TRENDING & SIGNALS", partner_supervictor_text: "Esperienze digitali interattive e prodotti del mondo reale.", learn_more_button: "Scopri di Più", visit_ghostverse_button: "Visita GhostVerse", follow_crom_button: "Segui CROMDAO", explore_plata_button: "Esplora Plata", explore_bidx_button: "Esplora BidXBot!", enter_universe_button: "Entra nell'Universo",
+            journey_title: "Il Viaggio di eBuds", success_title: "Il Nostro Successo", success_text: "Abbiamo costruito una comunità fiorente, lanciato con successo i nostri token e creato sistemi di ricompensa funzionanti. I nostri piani futuri includono nuovi vantaggi per i membri e l'espansione su più piattaforme partner.",
+            footer_navigate: "Naviga", footer_lightpaper: "Lightpaper", footer_community: "Comunità", footer_discord: "Discord", footer_telegram: "Telegram", footer_peerme: "PeerMe (DAO)", footer_resources: "Risorse", footer_support: "Supporto", footer_faq: "FAQ", footer_contact: "Contattaci", footer_copyright: `© ${new Date().getFullYear()} Progetto eBuds. Tutti i diritti riservati.`,
+            journey_milestone_0: "Il Blocco Genesi: Il nostro viaggio verso frontiere decentralizzate inizia, una singola scintilla che accende un universo di possibilità.", journey_milestone_1: "Nexus MultiversX: Ancorandoci in un ecosistema sicuro e ad alta velocità, poniamo le basi per un'esperienza finanziaria rivoluzionaria.", journey_milestone_2: "Il Decreto dell'Oracolo: Gli NFT si risvegliano, non più semplici oggetti da collezione, ma chiavi che sbloccano la governance e ricompense tangibili per i meritevoli.", journey_milestone_3: "Stelle Gemelle Allineate: I token EBUD & LUV si accendono, un motore dual-core che alimenta un'economia vibrante e partecipativa per tutti gli eCitizens.", journey_milestone_4: "Costellazione di Alleati: Innovatori e visionari si uniscono alla nostra orbita, stringendo partnership che espandono la nostra galassia e amplificano la nostra missione condivisa.", journey_milestone_5: "La Singularità Raggiunta: eBuds trascende, diventando una vera DAO – dove la coscienza collettiva della comunità plasma il destino."
+        },
+        de: { /* Traduceri în Germană */
+            nav_about: "Über Uns", nav_features: "Funktionen", nav_find_us: "Wo Sie Uns Finden", nav_partners: "Partner", nav_journey: "Unsere Reise", nav_success: "Erfolg", nav_faq: "FAQ", nav_connect: "Verbinden",
+            hero_title: "Willkommen bei eBuds", hero_subtitle: "Gemeinsam die Zukunft der Finanzen gestalten",
+            about_title: "Über eBuds", about_text: "eBuds ist eine Community, in der Sie die Zukunft der digitalen Finanzen mitgestalten können. Basierend auf der MultiversX-Technologie bieten wir eine sichere Plattform, auf der jedes Mitglied teilnehmen, abstimmen und Belohnungen verdienen kann.", read_more_button: "Mehr Lesen",
+            features_title: "Was Wir Bieten", 
+            feature_community_title: "Community-Macht", feature_community_text: "Ihre Stimme zählt bei eBuds! Über PeerMe, unsere DAO-Plattform, können Sie wichtige Projektentscheidungen vorschlagen, diskutieren und darüber abstimmen und so die Zukunft unseres Ökosystems direkt gestalten.", visit_peerme_button: "PeerMe Besuchen",
+            feature_treasury_title: "DAO-Schatzkammer", feature_treasury_text: "Unsere DAO-Schatzkammer, die von der Community über PeerMe verwaltet wird, finanziert transparent genehmigte Initiativen und Projekte und stellt sicher, dass Ressourcen zugewiesen werden, um das Wachstum und die Innovation von eBuds voranzutreiben.", view_on_explorer_button: "Im Explorer Anzeigen",
+            feature_ebud_title: "EBUD Token", feature_ebud_text: "Unser Haupt-Token ermöglicht Ihnen den Zugang zu exklusiven Vorteilen und Verdienstmöglichkeiten durch aktive Teilnahme in der Community.", view_token_button: "Token Ansehen", feature_luv_title: "LUV Token", feature_luv_text: "Unser sekundärer Token belohnt Ihre Loyalität und Ihr kontinuierliches Engagement mit besonderen Vorteilen und Möglichkeiten.", feature_nft_title: "NFT-Sammlung", feature_nft_text: "Einzigartige digitale Kunst, die echte Vorteile bringt: Stimmrechte, Belohnungen und Zugang zu exklusiven Veranstaltungen.", view_collection_button: "Sammlung Ansehen",
+            find_us_title: "Wo Sie Uns Finden", find_us_text: "EBUD- und LUV-Token sind auf den wichtigsten Krypto-Plattformen verfügbar und gewährleisten sichere und flexible Transaktionen:",
+            partners_title: "Unsere Partner", partner_hit_text: "Wir drehen den 💩 um!", partner_ghost_text: "Die NFT-DAO, in der Geister regieren.", partner_crom_text: "Dezentrale Autonome Organisation; die Macht von Web3 und Community-Zusammenarbeit.", partner_plata_text: "Pionier-MultiversX-Token", partner_bidx_text: "Entdecken Sie BUYBOT und MultiversX TRENDING & SIGNALS", partner_supervictor_text: "Interaktive digitale Erlebnisse & reale Produkte.", learn_more_button: "Mehr Erfahren", visit_ghostverse_button: "GhostVerse Besuchen", follow_crom_button: "CROMDAO Folgen", explore_plata_button: "Plata Erkunden", explore_bidx_button: "BidXBot Erkunden!", enter_universe_button: "Universum Betreten",
+            journey_title: "Die eBuds Reise", success_title: "Unser Erfolg", success_text: "Wir haben eine blühende Community aufgebaut, unsere Token erfolgreich eingeführt und funktionierende Belohnungssysteme geschaffen. Unsere Zukunftspläne umfassen neue Mitgliedervorteile und die Expansion auf weitere Partnerplattformen.",
+            footer_navigate: "Navigation", footer_lightpaper: "Lightpaper", footer_community: "Community", footer_discord: "Discord", footer_telegram: "Telegram", footer_peerme: "PeerMe (DAO)", footer_resources: "Ressourcen", footer_support: "Support", footer_faq: "FAQ", footer_contact: "Kontakt", footer_copyright: `© ${new Date().getFullYear()} eBuds Projekt. Alle Rechte vorbehalten.`,
+            journey_milestone_0: "Der Genesis-Block: Unsere Reise in dezentrale Grenzen beginnt, ein einzelner Funke, der ein Universum der Möglichkeiten entzündet.", journey_milestone_1: "MultiversX Nexus: Verankerung in einem schnellen, sicheren Ökosystem, wir legen den Grundstein für ein revolutionäres Finanzerlebnis.", journey_milestone_2: "Das Dekret des Orakels: NFTs erwachen, nicht länger nur Sammlerstücke, sondern Schlüssel, die Governance und greifbare Belohnungen für die Würdigen freischalten.", journey_milestone_3: "Zwillingssterne ausgerichtet: EBUD & LUV Token entzünden sich, ein Dual-Core-Motor, der eine lebendige, partizipative Wirtschaft für alle eBürger antreibt.", journey_milestone_4: "Konstellation von Verbündeten: Innovatoren und Visionäre treten unserer Umlaufbahn bei, schmieden Partnerschaften, die unsere Galaxie erweitern und unsere gemeinsame Mission verstärken.", journey_milestone_5: "Die Singularität erreicht: eBuds transzendiert und wird zu einer echten DAO – wo das kollektive Bewusstsein der Gemeinschaft das Schicksal formt."
+        },
+        ar: { /* Traduceri în Arabă */
+            nav_about: "من نحن", nav_features: "الميزات", nav_find_us: "أين تجدنا", nav_partners: "شركاؤنا", nav_journey: "رحلتنا", nav_success: "نجاحنا", nav_faq: "الأسئلة الشائعة", nav_connect: "اتصال",
+            hero_title: "مرحباً بك في إيبادز", hero_subtitle: "معاً نبني مستقبل التمويل",
+            about_title: "عن إيبادز", about_text: "إيبادز هو مجتمع لك فيه صوت في تشكيل مستقبل التمويل الرقمي. مبني على تقنية MultiversX، نقدم منصة آمنة حيث يمكن لكل عضو المشاركة والتصويت وكسب المكافآت.", read_more_button: "اقرأ المزيد",
+            features_title: "ماذا نقدم", 
+            feature_community_title: "قوة المجتمع", feature_community_text: "صوتك مهم في إيبادز! من خلال PeerMe، منصة DAO الخاصة بنا، يمكنك اقتراح ومناقشة والتصويت على قرارات المشروع الرئيسية، لتشكيل مستقبل نظامنا البيئي مباشرة.", visit_peerme_button: "قم بزيارة PeerMe",
+            feature_treasury_title: "خزانة DAO", feature_treasury_text: "خزانتنا DAO، التي يديرها المجتمع من خلال PeerMe، تمول بشفافية المبادرات والمشاريع المعتمدة، مما يضمن تخصيص الموارد لدفع نمو وابتكار إيبادز.", view_on_explorer_button: "عرض على المستكشف",
+            feature_ebud_title: "رمز EBUD", feature_ebud_text: "رمزنا الرئيسي يمنحك الوصول إلى مزايا حصرية وفرص كسب من خلال المشاركة المجتمعية النشطة.", view_token_button: "عرض الرمز", feature_luv_title: "رمز LUV", feature_luv_text: "رمزنا الثانوي يكافئ ولاءك ومشاركتك المستمرة بامتيازات وفرص خاصة.", feature_nft_title: "مجموعة NFT", feature_nft_text: "فن رقمي فريد يجلب فوائد حقيقية: حقوق التصويت، المكافآت، والوصول إلى الأحداث الحصرية.", view_collection_button: "عرض المجموعة",
+            find_us_title: "أين تجدنا", find_us_text: "رموز EBUD و LUV متاحة على منصات العملات المشفرة الرئيسية، مما يضمن معاملات آمنة ومرنة:",
+            partners_title: "شركاؤنا", partner_hit_text: "نحن نقلب الـ 💩 رأساً على عقب!", partner_ghost_text: "الـ DAO NFT حيث يحكم الأشباح.", partner_crom_text: "منظمة مستقلة لامركزية؛ قوة الويب 3 وتعاون المجتمع.", partner_plata_text: "رمز MultiversX الرائد", partner_bidx_text: "اكتشف BUYBOT و MultiversX TRENDING & SIGNALS", partner_supervictor_text: "تجارب رقمية تفاعلية ومنتجات من العالم الحقيقي.", learn_more_button: "اعرف المزيد", visit_ghostverse_button: "قم بزيارة GhostVerse", follow_crom_button: "تابع CROMDAO", explore_plata_button: "استكشف Plata", explore_bidx_button: "استكشف BidXBot!", enter_universe_button: "ادخل الكون",
+            journey_title: "رحلة إيبادز", success_title: "نجاحنا", success_text: "لقد بنينا مجتمعًا مزدهرًا، وأطلقنا رموزنا بنجاح، وأنشأنا أنظمة مكافآت فعالة. تشمل خططنا المستقبلية مزايا جديدة للأعضاء والتوسع إلى المزيد من المنصات الشريكة.",
+            footer_navigate: "تصفح", footer_lightpaper: "الورقة البيضاء", footer_community: "المجتمع", footer_discord: "ديسكورد", footer_telegram: "تلجرام", footer_peerme: "PeerMe (DAO)", footer_resources: "الموارد", footer_support: "الدعم", footer_faq: "الأسئلة الشائعة", footer_contact: "اتصل بنا", footer_copyright: `© ${new Date().getFullYear()} مشروع إيبادز. جميع الحقوق محفوظة.`,
+            journey_milestone_0: "كتلة التكوين: تبدأ رحلتنا إلى الحدود اللامركزية، شرارة واحدة تشعل كونًا من الإمكانيات.", journey_milestone_1: "رابط MultiversX: ترسيخ أقدامنا في نظام بيئي عالي السرعة وآمن، نضع الأساس لتجربة مالية ثورية.", journey_milestone_2: "مرسوم أوراكل: تستيقظ NFTs، لم تعد مجرد مقتنيات، بل مفاتيح تفتح الحوكمة والمكافآت الملموسة للمستحقين.", journey_milestone_3: "نجمتان متوازيتان: تشتعل رموز EBUD و LUV، محرك ثنائي النواة يشغل اقتصادًا حيويًا وتشاركيًا لجميع مواطني eCitizens.", journey_milestone_4: "كوكبة الحلفاء: ينضم المبتكرون وأصحاب الرؤى إلى مدارنا، ويقيمون شراكات توسع مجرتنا وتعزز مهمتنا المشتركة.", journey_milestone_5: "تحقيق التفرد: تتجاوز eBuds، لتصبح DAO حقيقية - حيث يشكل الوعي الجماعي للمجتمع المصير."
+        },
+        ro: { /* Traduceri în Română */
+            nav_about: "Despre Noi", nav_features: "Caracteristici", nav_find_us: "Unde Ne Găsiți", nav_partners: "Parteneri", nav_journey: "Călătoria Noastră", nav_success: "Succes", nav_faq: "FAQ", nav_connect: "Conectare", // Cheie nouă pentru Connect
+            hero_title: "Bun Venit la eBuds", hero_subtitle: "Construim Împreună Viitorul Finanțelor", 
+            about_title: "Despre eBuds", about_text: "eBuds este o comunitate unde ai un cuvânt de spus în modelarea viitorului finanțelor digitale. Construit pe tehnologia MultiversX, oferim o platformă sigură unde fiecare membru poate participa, vota și câștiga recompense.", read_more_button: "Citește Mai Mult",
+            features_title: "Ce Oferim", 
+            feature_community_title: "Puterea Comunității", feature_community_text: "Vocea ta contează în eBuds! Prin PeerMe, platforma noastră DAO, poți propune, discuta și vota decizii cheie ale proiectului, modelând direct viitorul ecosistemului nostru.", visit_peerme_button: "Vizitează PeerMe",
+            feature_treasury_title: "Trezoreria DAO", feature_treasury_text: "Trezoreria noastră DAO, gestionată de comunitate prin PeerMe, finanțează în mod transparent inițiativele și proiectele aprobate, asigurând alocarea resurselor pentru a alimenta creșterea și inovația eBuds.", view_on_explorer_button: "Vezi pe Explorer",
+            feature_ebud_title: "Token EBUD", feature_ebud_text: "Tokenul nostru principal îți oferă acces la beneficii exclusive și oportunități de câștig prin participarea activă în comunitate.", view_token_button: "Vezi Token", feature_luv_title: "Token LUV", feature_luv_text: "Tokenul nostru secundar îți recompensează loialitatea și angajamentul continuu cu avantaje și oportunități speciale.", feature_nft_title: "Colecția NFT", feature_nft_text: "Artă digitală unică ce aduce beneficii reale: drepturi de vot, recompense și acces la evenimente exclusive.", view_collection_button: "Vezi Colecția",
+            find_us_title: "Unde Ne Găsiți", find_us_text: "Tokenurile EBUD și LUV sunt disponibile pe platformele cripto majore, asigurând tranzacții sigure și flexibile:",
+            partners_title: "Partenerii Noștri", partner_hit_text: "Întoarcem 💩!", partner_ghost_text: "DAO-ul NFT unde fantomele guvernează.", partner_crom_text: "Organizație Autonomă Descentralizată; puterea web3 și colaborarea comunitară.", partner_plata_text: "Token Pionier MultiversX", partner_bidx_text: "Descoperă BUYBOT și MultiversX TRENDING & SIGNALS", partner_supervictor_text: "Experiențe digitale interactive și produse din lumea reală.", learn_more_button: "Află Mai Mult", visit_ghostverse_button: "Vizitează GhostVerse", follow_crom_button: "Urmărește CROMDAO", explore_plata_button: "Explorează Plata", explore_bidx_button: "Explorează BidXBot!", enter_universe_button: "Intră în Univers",
+            journey_title: "Călătoria eBuds", success_title: "Succesul Nostru", success_text: "Am construit o comunitate înfloritoare, am lansat cu succes tokenurile noastre și am creat sisteme de recompensare funcționale. Planurile noastre de viitor includ noi beneficii pentru membri și extinderea pe mai multe platforme partenere.",
+            footer_navigate: "Navigare", footer_lightpaper: "Lightpaper", footer_community: "Comunitate", footer_discord: "Discord", footer_telegram: "Telegram", footer_peerme: "PeerMe (DAO)", footer_resources: "Resurse", footer_support: "Suport", footer_faq: "FAQ", footer_contact: "Contactează-ne", footer_copyright: `© ${new Date().getFullYear()} Proiectul eBuds. Toate drepturile rezervate.`,
+            journey_milestone_0: "Blocul Genezei: Călătoria noastră în frontierele descentralizate începe, o singură scânteie aprinzând un univers de posibilități.", journey_milestone_1: "Nexus MultiversX: Ancorându-ne într-un ecosistem de mare viteză și sigur, punem bazele unei experiențe financiare revoluționare.", journey_milestone_2: "Decretul Oracolului: NFT-urile se trezesc, nu mai sunt simple obiecte de colecție, ci chei care deblochează guvernanța și recompense tangibile pentru cei merituoși.", journey_milestone_3: "Stele Gemene Aliniate: Tokenurile EBUD & LUV se aprind, un motor dual-core alimentând o economie vibrantă și participativă pentru toți eCetățenii.", journey_milestone_4: "Constelația Aliaților: Inovatori și vizionari se alătură orbitei noastre, formând parteneriate care extind galaxia noastră și amplifică misiunea noastră comună.", journey_milestone_5: "Singularitatea Atinsă: eBuds transcende, devenind un DAO adevărat - unde conștiința colectivă a comunității modelează destinul."
+        },
+        zh: { /* Traduceri în Chineză (Simplificată) */
+            nav_about: "关于我们", nav_features: "功能", nav_find_us: "在哪里找到我们", nav_partners: "合作伙伴", nav_journey: "我们的旅程", nav_success: "成功", nav_faq: "常见问题", nav_connect: "连接",
+            hero_title: "欢迎来到 eBuds", hero_subtitle: "共同构建金融的未来",
+            about_title: "关于 eBuds", about_text: "eBuds 是一个社区，您可以在其中发表意见，塑造数字金融的未来。基于 MultiversX 技术构建，我们提供一个安全的平台，每个成员都可以参与、投票并获得奖励。", read_more_button: "阅读更多",
+            features_title: "我们提供什么", 
+            feature_community_title: "社区力量", feature_community_text: "您的声音在 eBuds 中很重要！通过 PeerMe，我们的 DAO 平台，您可以提议、讨论和投票表决关键项目决策，直接塑造我们生态系统的未来。", visit_peerme_button: "访问 PeerMe",
+            feature_treasury_title: "DAO 财库", feature_treasury_text: "我们的 DAO 财库由社区通过 PeerMe 管理，透明地资助已批准的倡议和项目，确保资源分配以推动 eBuds 的增长和创新。", view_on_explorer_button: "在浏览器中查看",
+            feature_ebud_title: "EBUD 代币", feature_ebud_text: "我们的主要代币通过积极的社区参与为您提供独家优惠和赚钱机会。", view_token_button: "查看代币", feature_luv_title: "LUV 代币", feature_luv_text: "我们的次要代币通过特殊津贴和机会奖励您的忠诚度和持续参与。", feature_nft_title: "NFT 收藏", feature_nft_text: "独特的数字艺术带来真正的好处：投票权、奖励和独家活动访问权。", view_collection_button: "查看收藏",
+            find_us_title: "在哪里找到我们", find_us_text: "EBUD 和 LUV 代币可在主要加密平台上使用，确保交易安全灵活：",
+            partners_title: "我们的合作伙伴", partner_hit_text: "我们正在扭转乾坤！", partner_ghost_text: "幽灵统治的 NFT DAO。", partner_crom_text: "去中心化自治组织；web3 和社区协作的力量。", partner_plata_text: "MultiversX 先锋代币", partner_bidx_text: "发现 BUYBOT 和 MultiversX 趋势与信号", partner_supervictor_text: "互动数字体验和现实世界产品。", learn_more_button: "了解更多", visit_ghostverse_button: "访问 GhostVerse", follow_crom_button: "关注 CROMDAO", explore_plata_button: "探索 Plata", explore_bidx_button: "探索 BidXBot!", enter_universe_button: "进入宇宙",
+            journey_title: "eBuds 之旅", success_title: "我们的成功", success_text: "我们已经建立了一个蓬勃发展的社区，成功推出了我们的代币，并创建了有效的奖励系统。我们未来的计划包括为会员提供新的福利并扩展到更多的合作伙伴平台。",
+            footer_navigate: "导航", footer_lightpaper: "白皮书", footer_community: "社区", footer_discord: "Discord", footer_telegram: "Telegram", footer_peerme: "PeerMe (DAO)", footer_resources: "资源", footer_support: "支持", footer_faq: "常见问题", footer_contact: "联系我们", footer_copyright: `© ${new Date().getFullYear()} eBuds 项目。版权所有。`,
+            journey_milestone_0: "创世区块：我们进入去中心化前沿的航程开始，一颗火花点燃了一个充满可能性的宇宙。", journey_milestone_1: "MultiversX 枢纽：在一个高速、安全的生态系统中扎根，我们为革命性的金融体验奠定了基础。", journey_milestone_2: "神谕法令：NFT 觉醒，不再仅仅是收藏品，而是解锁治理权和为有价值者提供实际奖励的钥匙。", journey_milestone_3: "双星连珠：EBUD 和 LUV 代币点燃，一个双核引擎为所有 eCitizen 驱动一个充满活力和参与性的经济体。", journey_milestone_4: "盟友星座：创新者和远见者加入我们的轨道，建立伙伴关系，扩展我们的星系并扩大我们的共同使命。", journey_milestone_5: "奇点实现：eBuds 超越，成为一个真正的 DAO——社区的集体意识塑造命运。"
+        },
+        ja: { /* Traduceri în Japoneză */
+            nav_about: "概要", nav_features: "特徴", nav_find_us: "取扱場所", nav_partners: "パートナー", nav_journey: "私たちの旅", nav_success: "成功事例", nav_faq: "FAQ", nav_connect: "接続",
+            hero_title: "eBuds へようこそ", hero_subtitle: "共に金融の未来を築く",
+            about_title: "eBuds について", about_text: "eBuds は、デジタル金融の未来を形作る上であなたの意見が反映されるコミュニティです。MultiversX 技術に基づいて構築されており、すべてのメンバーが参加し、投票し、報酬を得ることができる安全なプラットフォームを提供しています。", read_more_button: "続きを読む",
+            features_title: "提供内容", 
+            feature_community_title: "コミュニティパワー", feature_community_text: "eBuds ではあなたの声が重要です！DAO プラットフォームである PeerMe を通じて、主要なプロジェクトの決定を提案、議論、投票し、エコシステムの未来を直接形作ることができます。", visit_peerme_button: "PeerMe を訪問",
+            feature_treasury_title: "DAO 財務", feature_treasury_text: "コミュニティが PeerMe を通じて管理する当社の DAO 財務は、承認されたイニシアチブやプロジェクトに透明性をもって資金を提供し、eBuds の成長と革新を促進するためにリソースが割り当てられることを保証します。", view_on_explorer_button: "エクスプローラーで表示",
+            feature_ebud_title: "EBUD トークン", feature_ebud_text: "私たちの主要トークンは、積極的なコミュニティ参加を通じて、独占的な特典と収益機会へのアクセスを提供します。", view_token_button: "トークンを見る", feature_luv_title: "LUV トークン", feature_luv_text: "私たちのセカンダリトークンは、特別な特典と機会であなたの忠誠心と継続的な関与に報います。", feature_nft_title: "NFT コレクション", feature_nft_text: "投票権、報酬、独占イベントへのアクセスなど、真のメリットをもたらすユニークなデジタルアート。", view_collection_button: "コレクションを見る",
+            find_us_title: "取扱場所", find_us_text: "EBUD および LUV トークンは、主要な暗号プラットフォームで利用可能であり、安全で柔軟な取引を保証します。",
+            partners_title: "私たちのパートナー", partner_hit_text: "私たちは💩を好転させています！", partner_ghost_text: "幽霊が統治するNFT DAO。", partner_crom_text: "分散型自律組織。web3とコミュニティコラボレーションの力。", partner_plata_text: "MultiversXのパイオニアトークン", partner_bidx_text: "BUYBOTとMultiversXのトレンド＆シグナルを発見", partner_supervictor_text: "インタラクティブなデジタル体験と現実世界の製品。", learn_more_button: "詳細を見る", visit_ghostverse_button: "GhostVerse を訪問", follow_crom_button: "CROMDAOをフォロー", explore_plata_button: "Plataを探索", explore_bidx_button: "BidXBotを探索！", enter_universe_button: "宇宙に入る",
+            journey_title: "eBuds の旅", success_title: "私たちの成功", success_text: "私たちは活気あるコミュニティを構築し、トークンを成功裏に立ち上げ、機能する報酬システムを作成しました。今後の計画には、新しいメンバー特典やより多くのパートナープラットフォームへの拡大が含まれます。",
+            footer_navigate: "ナビゲート", footer_lightpaper: "ライトペーパー", footer_community: "コミュニティ", footer_discord: "Discord", footer_telegram: "Telegram", footer_peerme: "PeerMe (DAO)", footer_resources: "リソース", footer_support: "サポート", footer_faq: "よくある質問", footer_contact: "お問い合わせ", footer_copyright: `© ${new Date().getFullYear()} eBuds プロジェクト。無断複写・転載を禁じます。`,
+            journey_milestone_0: "ジェネシスブロック：分散型フロンティアへの私たちの航海が始まります。単一の火花が可能性の宇宙を点火します。", journey_milestone_1: "MultiversX ネクサス：高速で安全なエコシステムに定着し、革命的な金融体験の基盤を築きます。", journey_milestone_2: "オラクルの布告：NFT が目覚め、もはや単なる収集品ではなく、ガバナンスと価値ある者への具体的な報酬を解き放つ鍵となります。", journey_milestone_3: "ツインスターズ整列：EBUD と LUV トークンが点火し、すべての eCitizen のための活気に満ちた参加型経済を動かすデュアルコアエンジンとなります。", journey_milestone_4: "同盟の星座：革新者と先見者が私たちの軌道に加わり、私たちの銀河を拡大し、共有された使命を増幅するパートナーシップを築きます。", journey_milestone_5: "シンギュラリティ達成：eBuds は超越 し、真の DAO となります。そこではコミュニティの集合意識が運命を形作ります。"
+        },
+        ko: { /* Traduceri în Coreeană */
+            nav_about: "소개", nav_features: "특징", nav_find_us: "찾아오시는 길", nav_partners: "파트너", nav_journey: "우리의 여정", nav_success: "성공 사례", nav_faq: "FAQ", nav_connect: "연결",
+            hero_title: "eBuds에 오신 것을 환영합니다", hero_subtitle: "함께 금융의 미래를 만들어갑니다",
+            about_title: "eBuds 소개", about_text: "eBuds는 디지털 금융의 미래를 만들어가는 데 여러분의 목소리를 낼 수 있는 커뮤니티입니다. MultiversX 기술을 기반으로 구축된 당사는 모든 회원이 참여하고, 투표하고, 보상을 받을 수 있는 안전한 플랫폼을 제공합니다.", read_more_button: "더 읽어보기",
+            features_title: "제공 서비스", 
+            feature_community_title: "커뮤니티 파워", feature_community_text: "eBuds에서는 여러분의 목소리가 중요합니다! DAO 플랫폼인 PeerMe를 통해 주요 프로젝트 결정에 대해 제안, 토론 및 투표하여 생태계의 미래를 직접 만들어갈 수 있습니다.", visit_peerme_button: "PeerMe 방문",
+            feature_treasury_title: "DAO 재무부", feature_treasury_text: "PeerMe를 통해 커뮤니티가 관리하는 당사의 DAO 재무부는 승인된 이니셔티브와 프로젝트에 투명하게 자금을 지원하여 eBuds의 성장과 혁신을 촉진하기 위해 리소스가 할당되도록 보장합니다.", view_on_explorer_button: "탐색기에서 보기",
+            feature_ebud_title: "EBUD 토큰", feature_ebud_text: "당사의 주요 토큰은 적극적인 커뮤니티 참여를 통해 독점적인 혜택과 수익 창출 기회를 제공합니다.", view_token_button: "토큰 보기", feature_luv_title: "LUV 토큰", feature_luv_text: "당사의 보조 토큰은 특별한 혜택과 기회로 여러분의 충성도와 지속적인 참여에 보상합니다.", feature_nft_title: "NFT 컬렉션", feature_nft_text: "투표권, 보상, 독점 이벤트 참여 등 실질적인 혜택을 제공하는 독특한 디지털 아트입니다.", view_collection_button: "컬렉션 보기",
+            find_us_title: "찾아오시는 길", find_us_text: "EBUD 및 LUV 토큰은 주요 암호화폐 플랫폼에서 사용할 수 있으며 안전하고 유연한 거래를 보장합니다.",
+            partners_title: "우리의 파트너", partner_hit_text: "우리는 💩을 바꾸고 있습니다!", partner_ghost_text: "유령이 지배하는 NFT DAO.", partner_crom_text: "탈중앙화 자치 조직; 웹3와 커뮤니티 협업의 힘.", partner_plata_text: "선구적인 MultiversX 토큰", partner_bidx_text: "BUYBOT 및 MultiversX 트렌드 및 신호 발견", partner_supervictor_text: "인터랙티브 디지털 경험 및 실제 제품.", learn_more_button: "더 알아보기", visit_ghostverse_button: "GhostVerse 방문", follow_crom_button: "CROMDAO 팔로우", explore_plata_button: "Plata 탐색", explore_bidx_button: "BidXBot 탐색!", enter_universe_button: "우주로 들어가기",
+            journey_title: "eBuds 여정", success_title: "우리의 성공", success_text: "우리는 활기찬 커뮤니티를 구축하고 토큰을 성공적으로 출시했으며 작동하는 보상 시스템을 만들었습니다. 향후 계획에는 새로운 회원 혜택과 더 많은 파트너 플랫폼으로의 확장이 포함됩니다.",
+            footer_navigate: "탐색", footer_lightpaper: "라이트페이퍼", footer_community: "커뮤니티", footer_discord: "디스코드", footer_telegram: "텔레그램", footer_peerme: "PeerMe (DAO)", footer_resources: "자료", footer_support: "지원", footer_faq: "FAQ", footer_contact: "문의하기", footer_copyright: `© ${new Date().getFullYear()} eBuds 프로젝트. 모든 권리 보유.`,
+            journey_milestone_0: "제네시스 블록: 분산된 국경으로의 우리의 여정은 시작되며, 단 하나의 불꽃이 가능성의 우주를 점화합니다.", journey_milestone_1: "MultiversX 넥서스: 고속의 안전한 생태계에 정착하여 혁신적인 금융 경험의 토대를 마련합니다.", journey_milestone_2: "오라클의 선언: NFT가 깨어나 더 이상 단순한 수집품이 아니라 거버넌스와 가치 있는 자를 위한 실질적인 보상을 잠금 해제하는 열쇠가 됩니다.", journey_milestone_3: "쌍둥이 별 정렬: EBUD 및 LUV 토큰이 점화되어 모든 eCitizen을 위한 활기차고 참여적인 경제를 구동하는 듀얼 코어 엔진이 됩니다.", journey_milestone_4: "동맹의 별자리: 혁신가와 비전가들이 우리 궤도에 합류하여 우리 은하를 확장하고 공동의 사명을 증폭시키는 파트너십을 구축합니다.", journey_milestone_5: "특이점 달성: eBuds는 초월하여 진정한 DAO가 되며, 커뮤니티의 집단 의식이 운명을 결정합니다."
+        }
+      };
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Declanșarea animației personalizate cu Intersection Observer
+      const animatedSections = document.querySelectorAll('.section-animate');
+
+      const observerOptions = {
+        root: null, 
+        rootMargin: '0px',
+        threshold: 0.1 
+      };
+
+      const sectionObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (entry.target.id !== 'achievements' || !window.ebudsJourney || !window.ebudsJourney.allMilestonesRevealed) {
+                 if(entry.target.id !== 'our-journey' || (entry.target.id === 'our-journey' && window.ebudsJourney && window.ebudsJourney.journeySectionVisible)){
+                    entry.target.classList.add('visible');
+                 }
+            }
+            
+            if (entry.target.id !== 'our-journey') {
+                const cardsInside = entry.target.querySelectorAll('.glass-card.card-animate');
+                cardsInside.forEach((card, index) => {
+                    card.style.transitionDelay = `${index * 0.2}s`; 
+                    card.classList.add('visible');
+                });
+            }
+          } 
+        });
+      }, observerOptions);
+
+      animatedSections.forEach(section => {
+        sectionObserver.observe(section);
+      });
+
+      // --- Funcționalitatea de traducere ---
+      const languageSelector = document.getElementById('language-selector'); 
+      const translatableElements = document.querySelectorAll('[data-translate-key]');
+
+      function translatePage(language) {
+        translatableElements.forEach(element => {
+            const key = element.getAttribute('data-translate-key');
+            if (translations[language] && translations[language][key]) {
+                element.innerHTML = translations[language][key]; 
+            } else if (translations.en && translations.en[key]) { // Fallback la Engleză
+                 element.innerHTML = translations.en[key];
+            }
+        });
+        document.documentElement.lang = language; // Setează atributul lang al HTML
+      }
+
+      if (languageSelector) {
+        languageSelector.addEventListener('change', (event) => {
+            const selectedLanguage = event.target.value;
+            translatePage(selectedLanguage);
+
+            // 1. Derulează pagina în partea de sus
+            window.scrollTo({ top: 0, behavior: 'auto' }); // 'auto' pentru derulare instantanee
+
+            // 2. Resetează animațiile CSS declanșate de scroll
+            // Selectează toate elementele care pot fi animate la scroll
+            const animatedScrollElements = document.querySelectorAll('.section-animate, .glass-card.card-animate, .milestone-card.card-animate');
+            animatedScrollElements.forEach(el => {
+                el.classList.remove('visible');
+            });
+            
+            // Forțează o recalculare a layout-ului pentru a asigura că eliminarea clasei este procesată
+            // înainte ca IntersectionObserver să reevalueze elementele.
+            document.body.offsetHeight; 
+
+            // 3. Reinițializează afișarea călătoriei și resetează starea animației
+            if (window.ebudsJourney && typeof window.ebudsJourney.initializeJourneyDisplay === 'function') {
+                window.ebudsJourney.initializeJourneyDisplay(); // Re-creează cardurile pentru etapele călătoriei
+                window.ebudsJourney.allMilestonesRevealed = false; // Permite re-animarea secțiunii "Achievements"
+                // Poziția camerei în animația Three.js se va actualiza pe baza scrollY (care este acum 0)
+            }
+            
+            // IntersectionObserver va re-evalua automat elementele care sunt acum în viewport
+            // și va adăuga clasa 'visible' pentru a re-declanșa animațiile.
+        });
+      }
+      // Traducere inițială la încărcarea paginii
+      translatePage(languageSelector ? languageSelector.value : 'en'); 
+
+    }); 
+
+    // =========================
+    // Clasa BlockchainJourney
+    // =========================
+    class BlockchainJourney {
+      constructor() {
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); 
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        const journeyBackgroundEl = document.querySelector(".journey-background");
+        if (journeyBackgroundEl) { 
+            journeyBackgroundEl.appendChild(this.renderer.domElement);
+        }
+        
+        this.tunnelElements = []; 
+
+        this.milestones = [ 
+          { textKey: "journey_milestone_0", position: 0, id: "milestone-0" },
+          { textKey: "journey_milestone_1", position: -15, id: "milestone-1" },
+          { textKey: "journey_milestone_2", position: -30, id: "milestone-2" },
+          { textKey: "journey_milestone_3", position: -45, id: "milestone-3" },
+          { textKey: "journey_milestone_4", position: -60, id: "milestone-4" },
+          { textKey: "journey_milestone_5", position: -78, id: "milestone-5" } 
+        ];
+        
+        this.tunnelGroup = new THREE.Group(); 
+        this.scene.add(this.tunnelGroup);
+        
+        const styles = getComputedStyle(document.documentElement);
+        const originalDarkBgColor = styles.getPropertyValue('--original-dark-bg').trim() || '#030014'; 
+        this.scene.fog = new THREE.FogExp2(new THREE.Color(originalDarkBgColor).getHex(), 0.020); 
+
+
+        this.threeColors = { 
+            themePurpleMedium: new THREE.Color(styles.getPropertyValue('--theme-purple-medium').trim() || '#a78bfa'),
+            themePurpleDark: new THREE.Color(styles.getPropertyValue('--theme-purple-dark').trim() || '#6d28d9'),
+            themePurpleLight: new THREE.Color(styles.getPropertyValue('--theme-purple-light').trim() || '#c084fc'),
+            originalNeonGreen: new THREE.Color(styles.getPropertyValue('--original-neon-green').trim() || '#00ff9d')
+        };
+
+
+        this.createTimeTunnel(); 
+        this.addLighting(); 
+        this.addStreakingParticles(); 
+
+        this.camera.position.z = 10; 
+        
+        this.milestoneStackContainer = document.getElementById('milestone-stack-container');
+        this.milestoneCardElements = []; 
+        this.journeySectionVisible = false; 
+        this.allMilestonesRevealed = false;
+
+        this.initializeJourneyDisplay(); 
+        this.setupJourneySectionObserver(); 
+
+        this.clock = new THREE.Clock(); 
+
+        this.animate(); 
+        this.addEventListeners(); 
+      }
+
+      setupJourneySectionObserver() {
+        const journeySection = document.getElementById('our-journey');
+        if (!journeySection) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                this.journeySectionVisible = entry.isIntersecting;
+                 if(entry.isIntersecting && !journeySection.classList.contains('visible')) { 
+                    journeySection.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.01 }); 
+
+        observer.observe(journeySection);
+      }
+
+
+      initializeJourneyDisplay() {
+        if (!this.milestoneStackContainer) return;
+        this.milestoneStackContainer.innerHTML = ''; 
+        this.milestoneCardElements = []; 
+        const currentLang = document.getElementById('language-selector')?.value || 'en'; 
+
+        this.milestones.forEach((milestone) => { 
+            const card = document.createElement('div');
+            card.classList.add('milestone-card', 'card-animate'); 
+            card.setAttribute('data-milestone-id', milestone.id);
+            card.setAttribute('data-translate-key', milestone.textKey); 
+            const translatedText = (translations[currentLang] && translations[currentLang][milestone.textKey]) 
+                                   ? translations[currentLang][milestone.textKey] 
+                                   : (translations.en && translations.en[milestone.textKey]) 
+                                   ? translations.en[milestone.textKey]
+                                   : `Milestone: ${milestone.id}`; 
+            card.innerHTML = translatedText; 
+            this.milestoneStackContainer.appendChild(card);
+            this.milestoneCardElements.push(card);
+        });
+      }
+
+      createTimeTunnel() { 
+        const octahedronGeometry = new THREE.OctahedronGeometry(1, 0); 
+        const octahedronMaterial = new THREE.MeshPhongMaterial({ 
+          color: this.threeColors.themePurpleMedium, 
+          emissive: this.threeColors.themePurpleDark, 
+          specular: 0xeeeeee, 
+          shininess: 80, 
+          transparent: true,
+          opacity: 0.5, 
+        });
+
+        for (let i = 0; i < 60; i++) { 
+          const octahedron = new THREE.Mesh(octahedronGeometry, octahedronMaterial);
+          
+          const radius = 10 + Math.random() * 5; 
+          const angle = (i / 60) * Math.PI * 10; 
+          octahedron.position.x = radius * Math.cos(angle);
+          octahedron.position.y = radius * Math.sin(angle);
+          octahedron.position.z = i * -2 - Math.random() * 3; 
+          
+          octahedron.rotation.x = Math.random() * Math.PI * 2; 
+          octahedron.rotation.y = Math.random() * Math.PI * 2;
+          octahedron.rotation.z = Math.random() * Math.PI * 2;
+
+          const scale = 0.5 + Math.random() * 1.2; 
+          octahedron.scale.set(scale, scale, scale); 
+          octahedron.userData.initialScale = octahedron.scale.clone(); 
+          octahedron.userData.rotationSpeed = new THREE.Vector3(
+            (Math.random() - 0.5) * 0.1,
+            (Math.random() - 0.5) * 0.1,
+            (Math.random() - 0.5) * 0.1
+          );
+
+          this.tunnelElements.push(octahedron);
+          this.tunnelGroup.add(octahedron); 
+        }
+      }
+
+      addLighting() { 
+        const ambientLight = new THREE.AmbientLight(this.threeColors.themePurpleLight, 0.7); 
+        this.scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5); 
+        directionalLight.position.set(1, 2, 3); 
+        this.scene.add(directionalLight);
+
+        const pointLight1 = new THREE.PointLight(this.threeColors.originalNeonGreen, 1, 150); 
+        pointLight1.position.set(8, 8, -50); 
+        this.scene.add(pointLight1);
+        
+        const pointLight2 = new THREE.PointLight(this.threeColors.themePurpleLight, 0.8, 130);
+        pointLight2.position.set(-8, -8, -70);
+        this.scene.add(pointLight2);
+      }
+
+      addStreakingParticles() { 
+        const particleCount = 2500; 
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        const velocities = new Float32Array(particleCount * 3); 
+
+        const color1 = this.threeColors.themePurpleLight;
+        const color2 = this.threeColors.originalNeonGreen;
+        const color3 = new THREE.Color(0xffffff); 
+
+        for (let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+            positions[i3] = (Math.random() - 0.5) * 50; 
+            positions[i3 + 1] = (Math.random() - 0.5) * 50; 
+            positions[i3 + 2] = (Math.random() - 1.5) * 200; 
+
+            const randColor = Math.random();
+            let particleColor;
+            if (randColor < 0.4) particleColor = color1;
+            else if (randColor < 0.8) particleColor = color2;
+            else particleColor = color3;
+
+            colors[i3] = particleColor.r;
+            colors[i3 + 1] = particleColor.g;
+            colors[i3 + 2] = particleColor.b;
+
+            velocities[i3] = (Math.random() - 0.5) * 0.02; 
+            velocities[i3 + 1] = (Math.random() - 0.5) * 0.02; 
+            velocities[i3 + 2] = 0.3 + Math.random() * 0.4; 
+        }
+
+        const particleGeometry = new THREE.BufferGeometry();
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        particleGeometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3)); 
+
+        const particleMaterial = new THREE.PointsMaterial({
+          size: 0.12, 
+          vertexColors: true,
+          blending: THREE.AdditiveBlending,
+          transparent: true,
+          opacity: 0.65, 
+          depthWrite: false 
+        });
+        
+        this.particles = new THREE.Points(particleGeometry, particleMaterial);
+        this.scene.add(this.particles);
+      }
+
+      animate() {
+        requestAnimationFrame(() => this.animate());
+        const delta = this.clock.getDelta(); 
+        const elapsedTime = this.clock.getElapsedTime(); 
+
+        this.tunnelElements.forEach((element) => {
+          element.rotation.x += element.userData.rotationSpeed.x * delta * 50; 
+          element.rotation.y += element.userData.rotationSpeed.y * delta * 50;
+          element.rotation.z += element.userData.rotationSpeed.z * delta * 50;
+          
+          if (element.userData.initialScale) {
+            const scalePulse = 1 + Math.sin(elapsedTime * 0.9 + element.position.z * 0.1) * 0.05; 
+            element.scale.copy(element.userData.initialScale).multiplyScalar(scalePulse);
+          }
+        });
+        
+        if (this.particles) {
+            const positions = this.particles.geometry.attributes.position.array;
+            const velocities = this.particles.geometry.attributes.velocity.array;
+            for (let i = 0; i < positions.length / 3; i++) {
+                const i3 = i * 3;
+                positions[i3] += velocities[i3]; 
+                positions[i3 + 1] += velocities[i3 + 1]; 
+                positions[i3 + 2] += velocities[i3 + 2]; 
+                
+                if (positions[i3 + 2] > this.camera.position.z + 20) { 
+                    positions[i3 + 2] = this.camera.position.z - 120 - Math.random() * 30; 
+                    positions[i3] = (Math.random() - 0.5) * 50; 
+                    positions[i3 + 1] = (Math.random() - 0.5) * 50; 
+                }
+            }
+            this.particles.geometry.attributes.position.needsUpdate = true; 
+            this.particles.rotation.z += delta * 0.015; 
+        }
+
+        const scrollMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const scrollPercent = window.scrollY / scrollMax;
+        
+        const targetZ = 10 - (scrollPercent * 105); 
+        this.camera.position.z += (targetZ - this.camera.position.z) * 0.04; 
+
+        this.camera.rotation.z = (scrollPercent * Math.PI * 0.015); 
+        this.camera.rotation.x = (scrollPercent * Math.PI * 0.007); 
+
+        if (this.journeySectionVisible && !this.allMilestonesRevealed) {
+            let allCardsInJourneyAreVisible = true; 
+            this.milestones.forEach((milestone, index) => {
+                const card = this.milestoneCardElements[index];
+                if (!card) return;
+
+                if (this.camera.position.z <= milestone.position) {
+                    if (!card.classList.contains('visible')) {
+                        card.classList.add('visible');
+                    }
+                }
+                if (!card.classList.contains('visible')) { 
+                    allCardsInJourneyAreVisible = false;
+                }
+            });
+
+            if (allCardsInJourneyAreVisible) { 
+                this.allMilestonesRevealed = true; 
+                const achievementsSection = document.getElementById('achievements');
+                if (achievementsSection && !achievementsSection.classList.contains('visible')) {
+                    achievementsSection.classList.add('visible');
+                    const achievementCards = achievementsSection.querySelectorAll('.glass-card.card-animate');
+                    achievementCards.forEach((card, index) => {
+                        card.style.transitionDelay = `${index * 0.2}s`; 
+                        card.classList.add('visible');
+                    });
+                }
+            }
+        }
+        
+        this.renderer.render(this.scene, this.camera); 
+      }
+
+      addEventListeners() {
+        window.addEventListener("resize", () => {
+          this.camera.aspect = window.innerWidth / window.innerHeight;
+          this.camera.updateProjectionMatrix();
+          this.renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+    }
+    window.ebudsJourney = null; 
+    if (document.querySelector(".journey-background")) { 
+        window.ebudsJourney = new BlockchainJourney();
+    }
+
+    // ====================
+    // Gestionarea Meniului Mobil
+    // ====================
+    const hamburger = document.querySelector(".hamburger");
+    const navLinks = document.querySelector(".nav-links");
+    const navLinksItems = document.querySelectorAll(".nav-links a");
+
+    if (hamburger && navLinks) { 
+        hamburger.addEventListener("click", (e) => {
+          e.stopPropagation(); 
+          hamburger.classList.toggle("active");
+          navLinks.classList.toggle("active");
+        });
+
+        navLinksItems.forEach((link) => {
+          link.addEventListener("click", () => { 
+            hamburger.classList.remove("active");
+            navLinks.classList.remove("active");
+          });
+        });
+
+        document.addEventListener("click", (e) => {
+            if (navLinks.classList.contains('active') && !hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+                hamburger.classList.remove("active");
+                navLinks.classList.remove("active");
+            }
+        });
+    }
+
+    // Scroll lin pentru linkurile de navigare
+    document.querySelectorAll('nav a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute("href");
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          const navHeight = document.querySelector('nav')?.offsetHeight || 0; 
+          const targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight - 20; 
+
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth' 
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

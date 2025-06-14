@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBudsDAC Light Paper</title>
+    <link rel="shortcut icon" href="assets/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;600&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-green: #00ff9d;
+            --neon-purple: #b700ff;
+            --dark-bg: #030014;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(0, 0, 0, 0.3);
+            --border-color: rgba(0, 255, 157, 0.2);
+            --text-color: #fff;
+            --highlight-color: var(--neon-green);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', 'Noto Sans', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-color);
+            line-height: 1.7; 
+            padding: 0 20px;
+            padding-top: 80px; /* Spațiu pentru bara de navigare fixă - valoare inițială pentru desktop */
+        }
+        
+        /* Navigarea pentru Lightpaper */
+        nav.lightpaper-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 0.75rem 1rem; 
+            background: rgba(3, 0, 20, 0.95); 
+            backdrop-filter: blur(10px); 
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        .lightpaper-nav-container {
+            max-width: 900px; 
+            margin: 0 auto;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            min-height: 44px; 
+        }
+        .nav-logo-lightpaper {
+            height: 38px; /* Dimensiune logo pentru desktop */
+            width: auto;
+            transition: filter 0.3s ease;
+        }
+        .nav-logo-lightpaper:hover {
+            filter: drop-shadow(0 0 8px var(--neon-green));
+        }
+        .nav-controls-lightpaper { 
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* Spațiu dacă ar fi mai multe controale */
+        }
+        
+        .nav-back-button {
+            font-family: 'Orbitron', 'Noto Sans', sans-serif;
+            font-size: 0.9em; /* Dimensiune font buton pentru desktop */
+            padding: 8px 15px; /* Padding buton pentru desktop */
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+            color: var(--dark-bg);
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap; 
+        }
+        .nav-back-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(0, 255, 157, 0.3);
+        }
+
+
+        .container-wrapper { 
+            max-width: 900px;
+            margin: 20px auto 40px auto; 
+            padding: 20px;
+        }
+
+        .main-content-area { 
+            background: rgba(10, 5, 25, 0.8); 
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--border-color); 
+            padding: 30px 40px; 
+            box-shadow: 0 0 25px rgba(183, 0, 255, 0.2);
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', 'Noto Sans', sans-serif;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+            -webkit-background-clip: text;
+            background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.8em;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: 2.8em; text-align: center; margin-top: 0; margin-bottom: 1.2em; }
+        h2 { font-size: 2em; margin-top: 2em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em;}
+        h3 { font-size: 1.5em; margin-top: 1.5em; color: var(--neon-green); -webkit-text-fill-color: unset; background: none;} 
+        h4 { font-size: 1.2em; margin-top: 1.2em; color: var(--neon-purple); -webkit-text-fill-color: unset; background: none;}
+
+
+        .content-section { 
+            margin-bottom: 2.5rem;
+        }
+        
+        .glass-section { 
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        p {
+            margin-bottom: 1.2em;
+            font-size: 1.05em;
+        }
+
+        .highlight {
+            color: var(--highlight-color);
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 25px;
+            margin-bottom: 1em;
+        }
+
+        li {
+            position: relative;
+            padding: 8px 0; 
+            font-size: 1em;
+        }
+
+        li::before {
+            content: '→';
+            position: absolute;
+            left: -25px;
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        
+        a { 
+            color: var(--neon-green);
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        a:hover {
+            color: var(--neon-purple);
+            text-shadow: 0 0 5px var(--neon-purple);
+        }
+        a.highlight:hover {
+             color: var(--neon-purple); 
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .token-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+        }
+        .token-card h3 { 
+            color: var(--neon-green);
+            font-size: 1.4em;
+             -webkit-text-fill-color: unset; 
+             background: none;
+        }
+        .token-card ul li::before {
+            color: var(--neon-purple);
+        }
+
+        /* Stiluri tabel (pentru Roadmap, etc.) */
+        .table-container {
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse; 
+        }
+        th, td {
+            border: 1px solid var(--border-color); 
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background: rgba(0, 255, 157, 0.15); 
+            font-family: 'Orbitron', 'Noto Sans', sans-serif;
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        td strong { color: var(--highlight-color); }
+
+        #toc {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+        }
+        #toc h2 { 
+            font-size: 1.6em;
+            text-align: center;
+            border-bottom: none;
+            margin-bottom: 15px;
+        }
+        #toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        #toc ul li { padding: 6px 0;}
+        #toc ul li::before { content: '❖'; color: var(--neon-purple); left: -22px; }
+        
+        #toc ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        #toc ul li a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+
+        .note {
+            background-color: rgba(0,0,0,0.2);
+            border-left: 4px solid var(--neon-purple);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.25rem;
+        }
+        .note p { margin-bottom: 0; font-style: italic; color: #ccc;}
+
+
+        .background-overlay { 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(183, 0, 255, 0.1), transparent 35%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 157, 0.1), transparent 35%);
+            z-index: -1;
+        }
+
+        @media (max-width: 768px) {
+            body { 
+                padding: 0 10px; 
+                padding-top: 70px; /* Ajustat padding-top pentru o bară de navigare mai suplă */
+            } 
+            nav.lightpaper-nav {
+                padding: 0.5rem 1rem; /* Ajustat padding-ul barei de navigare pentru mobil */
+            }
+            .lightpaper-nav-container {
+                /* flex-direction: column; */ /* ELIMINAT: Păstrează elementele pe un rând */
+                /* gap: 0.5rem; */ /* ELIMINAT */
+                min-height: 44px; /* Asigură o înălțime minimă consistentă */
+                /* padding-bottom: 0.5rem; */ /* ELIMINAT */
+            }
+            .nav-logo-lightpaper { 
+                height: 30px; /* Logo mai mic pe mobil */
+                /* margin-bottom: 0.5rem; */ /* ELIMINAT: Nu mai este necesar */
+            }
+            .nav-controls-lightpaper { 
+                /* width: 100%; */ /* ELIMINAT: Nu mai este necesar, flex se va ocupa */
+                /* display: flex; */ /* Părintele este deja flex */
+                /* justify-content: flex-end; */ /* Butonul va fi la dreapta datorită space-between pe părinte */
+            }
+            .nav-back-button {
+                font-size: 0.8em; /* Font mai mic pentru buton pe mobil */
+                padding: 6px 12px; /* Padding mai mic pentru buton pe mobil */
+            }
+
+            /* Restul stilurilor mobile rămân neschimbate dacă nu sunt specificate aici */
+            .container-wrapper {
+                padding: 10px;
+                margin: 20px 0;
+            }
+            .main-content-area { padding: 20px; }
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.6em; }
+            h3 { font-size: 1.2em; }
+            .token-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+
+    <nav class="lightpaper-nav">
+        <div class="lightpaper-nav-container">
+            <a href="index.html" class="logo-link">
+                <img src="assets/logo.png" alt="eBuds Logo" class="nav-logo-lightpaper">
+            </a>
+            <div class="nav-controls-lightpaper">
+                <a href="index.html" class="nav-back-button">← Back to Main Site</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-wrapper">
+        <div class="main-content-area">
+            <h1>eBudsDAC Light Paper</h1>
+
+            <section id="toc" class="content-section">
+                <h2>Table of Contents</h2>
+                <ul>
+                    <li><a href="#introduction">1️⃣ Introduction: Welcome to eBudsDAC</a></li>
+                    <li><a href="#what-is-ebudsdac">2️⃣ What is eBudsDAC?</a></li>
+                    <li><a href="#ebudsnfts">3️⃣ eBudsNFTs: More Than Art</a></li>
+                    <li><a href="#core-tokenomics">4️⃣ Core Tokenomics (EBUD & LUV)</a></li>
+                    <li><a href="#ebud-v2-overview">5️⃣ EBUD v.2: The Recovery Engine</a></li>
+                    <li><a href="#v2-buyback-burn">6️⃣ EBUD v.2: Buyback & Burn Mechanics</a></li>
+                    <li><a href="#v2-expected-outcomes">7️⃣ EBUD v.2: Expected Outcomes</a></li>
+                    <li><a href="#v2-roadmap">8️⃣ EBUD v.2: Roadmap</a></li>
+                    <li><a href="#v2-risks">9️⃣ EBUD v.2: Risks & Mitigations</a></li>
+                    <li><a href="#vision-conclusion">🔟 Vision & Conclusion</a></li>
+                    <li><a href="#get-involved">🚀 Get Involved & Stay Updated!</a></li>
+                </ul>
+            </section>
+
+            <section id="introduction" class="content-section glass-section">
+                <h2>1️⃣ Introduction: Welcome to eBudsDAC</h2>
+                <p>Welcome to <span class="highlight">eBudsDAC</span>, a groundbreaking Decentralized Autonomous Community (DAO) where innovation meets inclusivity. At eBudsDAC, we're reshaping decentralized finance (DeFi) by creating an ecosystem where every member's voice counts, and participation is richly rewarded.</p>
+                <p>This document outlines the foundational principles of eBudsDAC, its core tokenomics, and introduces <span class="highlight">EBUD v.2</span> - a critical turning point transitioning into a disciplined, deflationary recovery model designed to restore token value and realign the project toward sustainable long-term growth.</p>
+            </section>
+
+            <section id="what-is-ebudsdac" class="content-section glass-section">
+                <h2>2️⃣ What is eBudsDAC?</h2>
+                <p><span class="highlight">eBudsDAC</span> isn't just a DAO - it's a living, breathing ecosystem designed to empower its members. Imagine a community where decisions are made collectively, rewards are transparent, and everyone's contribution matters.</p>
+                <h3>Key Features:</h3>
+                <ul>
+                    <li><strong>Decentralized Governance:</strong> Your vote, your voice. Influence the future of our ecosystem through active participation, primarily via the PeerMe platform.</li>
+                    <li><strong>Tokenized Incentives:</strong> Earn real value by being an integral part of the community.</li>
+                    <li><strong>Exclusive Opportunities:</strong> Unlock unique benefits as an NFT holder.</li>
+                </ul>
+            </section>
+
+            <section id="ebudsnfts" class="content-section glass-section">
+                <h2>3️⃣ eBudsNFTs: More Than Art</h2>
+                <p>Designed purely for utility, eBudsNFTs are a foundational component of our ecosystem.</p>
+                <h3>Why Hold eBudsNFTs?</h3>
+                <ul>
+                    <li><strong>Gateway to the DAO:</strong> Each NFT is your membership card, granting governance rights.</li>
+                    <li><strong>Earn While You Hold:</strong> Enjoy weekly EBUD rewards (as per v.1 mechanics, evolving with v.2).</li>
+                    <li><strong>Unique Digital Identity:</strong> Each NFT offers exclusivity and status within the eBuds community.</li>
+                </ul>
+            </section>
+
+            <section id="core-tokenomics" class="content-section glass-section">
+                <h2>4️⃣ Core Tokenomics (EBUD & LUV)</h2>
+                <p>The eBuds ecosystem is powered by a dual-token system designed for utility, rewards, and liquidity.</p>
+                <div class="token-grid">
+                    <div class="token-card">
+                        <h3>EBUD Token</h3>
+                        <p>The primary utility and reward engine of our ecosystem.</p>
+                        <ul>
+                            <li>Initial v.1 Reward Supply: 10,000,000 EBUD (Distributed via NFT staking)</li>
+                            <li>Secondary v.1 LP Supply: 10,000,000 EBUD (Locked in EBUD-LUV LP)</li>
+                            <li>Max Potential Supply (Pre-v.2): 20,000,000 EBUD</li>
+                            <li>Role: Governance, Staking Rewards (v.1), Ecosystem Utility.</li>
+                        </ul>
+                    </div>
+                    <div class="token-card">
+                        <h3>LUV Token</h3>
+                        <p>The liquidity and loyalty backbone of our ecosystem.</p>
+                        <ul>
+                            <li>Total Supply: 10,000,000,000 LUV</li>
+                            <li>Fair Launch Model: Entire token supply (100%) provided to the EBUD liquidity pool.</li>
+                            <li>Role: Enhancing EBUD liquidity, potential for future loyalty rewards.</li>
+                        </ul>
+                    </div>
+                </div>
+                 <p><span class="highlight">Note:</span> The tokenomics described above reflect the state prior to EBUD v.2. The v.2 phase introduces significant deflationary mechanisms for EBUD.</p>
+            </section>
+
+            <section id="ebud-v2-overview" class="content-section">
+                <h2>5️⃣ EBUD v.2: The Recovery Engine</h2>
+                <p>EBUD v.2 initiates a two-year, fully deflationary phase characterized by zero new emissions, continuous buybacks, and permanent supply reduction for the EBUD token. The slogan for this phase is: <span class="highlight">“Burn the Past. Fuel the Recovery Engine.”</span></p>
+                <h3>Core v.2 Components:</h3>
+                <ul>
+                    <li><strong>Zero Inflation:</strong> No new EBUD tokens will be minted or emitted. All further changes to the total EBUD supply will be deflationary.</li>
+                    <li><strong>Continuous Buybacks:</strong> Protocol revenues, proceeds from ecosystem partnerships, EGLD generated from BFY rewards via Burnify, and a pre-allocated minimum of 100 EGLD will fund steady open-market EBUD buybacks.</li>
+                    <li><strong>Burnify Integration & Reward Generation:</strong> All EBUD tokens acquired through buybacks are directly burned via Burnify service, ensuring transparent and permanent supply reduction. Additionally, the BFY rewards earned from Burnify are automatically staked, generating daily EGLD rewards that further power the buyback engine.</li>
+                    <li><strong>Governance Oversight via PeerMe:</strong> The EBUD DAO, operating through the PeerMe platform, will empower the community to shape buyback intensity, burn pacing, and strategic allocation decisions with full transparency.</li>
+                </ul>
+            </section>
+
+            <section id="v2-buyback-burn" class="content-section">
+                <h2>6️⃣ EBUD v.2: Buyback & Burn Mechanics</h2>
+                <p>The heart of EBUD v.2 is its systematic, transparent, and community-overseen buyback and burn strategy for the EBUD token.</p>
+                
+                <h4>✅ Revenue Sources for Buybacks:</h4>
+                <ul>
+                    <li>Protocol-Generated Revenue: Earnings derived from yield-generating activities using protocol-owned assets in established DeFi protocols, and any fees from future EBUD utilities.</li>
+                    <li>Strategic Ecosystem Partnerships: Revenue streams from collaborations with synergistic projects.</li>
+                    <li>Burn-Generated Revenue via Burnify: BFY rewards earned by burning EBUD through the Burnify service are generating EGLD daily.</li>
+                    <li>Guaranteed Minimum Buyback Fund: A pre-allocated <strong>100 EGLD fund</strong>.</li>
+                </ul>
+                <div class="note">
+                    <p>(Note: The DAO Treasury is a multisig smart contract owned by all eBudsNFTs holders. While locked and not directly allocated to this v.2 phase, its deployment for strategic ecosystem initiatives or supplementary buybacks can be proposed and enacted via PeerMe governance.)</p>
+                </div>
+
+                <h4>✅ Buyback Execution:</h4>
+                <ul>
+                    <li>Scheduled open-market purchases conducted at regular intervals (e.g., weekly or bi-monthly, subject to DAO input via PeerMe).</li>
+                    <li>Flexible and adaptive execution, optimized to prevailing market conditions.</li>
+                </ul>
+
+                <h4>✅ Burn Process & Benefit:</h4>
+                <ul>
+                    <li>All purchased EBUD is irrevocably routed through the Burnify service and permanently removed from circulation.</li>
+                    <li>This act of burning generates BFY rewards, converted to EGLD daily, creating a positive feedback loop.</li>
+                    <li>Burns and reward generation are fully verifiable on-chain.</li>
+                </ul>
+            </section>
+
+            <section id="v2-expected-outcomes" class="content-section">
+                <h2>7️⃣ EBUD v.2: Expected Outcomes</h2>
+                <p>By implementing EBUD v.2’s robust deflationary strategy, the protocol aims to:</p>
+                <ul>
+                    <li>Achieve significant and sustained contraction of the circulating and total EBUD supply.</li>
+                    <li>Amplify EBUD token scarcity, thereby strengthening underlying token value.</li>
+                    <li>Rebuild and bolster investor and community confidence.</li>
+                    <li>Transition EBUD to a scarcity-driven, value-centric model.</li>
+                </ul>
+            </section>
+
+            <section id="v2-roadmap" class="content-section">
+                <h2>8️⃣ EBUD v.2: Roadmap</h2>
+                <p class="highlight" style="font-size:0.9em;"><em>(Status updated as of June 1, 2025)</em></p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Phase</th>
+                                <th>Milestone</th>
+                                <th>Target Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Phase Launch</strong></td>
+                                <td>Activate v.2 deflationary model; integrate Burnify</td>
+                                <td>Q1 2025</td>
+                                <td style="color: var(--neon-green);"><strong>Completed</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Revenue Setup</strong></td>
+                                <td>Establish initial revenue streams; optimize BFY reward conversion to EGLD</td>
+                                <td>Q1 2025</td>
+                                <td style="color: #f59e0b;"><strong>Updating & Optimizing</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Governance Live</strong></td>
+                                <td>Launch DAO voting mechanisms and operations on the PeerMe platform</td>
+                                <td>Q1 2025</td>
+                                <td style="color: #3b82f6;"><strong>Live</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Midpoint Review</strong></td>
+                                <td>Publish comprehensive burn data, revenue generation, and recovery progress report</td>
+                                <td>June 2026</td>
+                                <td>Planned</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phase Completion</strong></td>
+                                <td>Conclude the two-year intensive burn phase; announce EBUD v.3 roadmap</td>
+                                <td>June 2027</td>
+                                <td>Planned</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="v2-risks" class="content-section">
+                <h2>9️⃣ EBUD v.2: Risks & Mitigations</h2>
+                
+                <h4><span style="color: #ffcc00;">⚠</span> Low Revenue / BFY Fluctuation → Insufficient Buybacks</h4>
+                <p>→ <strong>Mitigation:</strong> Actively diversify revenue, forge new partnerships, monitor BFY dynamics, and rely on the pre-allocated 100 EGLD fund. DAO proposals via PeerMe can address strategic adjustments.</p>
+
+                <h4><span style="color: #ffcc00;">⚠</span> Market Volatility → Buyback Efficiency Challenges</h4>
+                <p>→ <strong>Mitigation:</strong> Employ adaptive buyback schedules (DCA, VWAP), spread purchases, and use market-sensitive strategies guided by DAO proposals on PeerMe.</p>
+
+                <h4><span style="color: #ffcc00;">⚠</span> Community Misalignment → Governance Friction</h4>
+                <p>→ <strong>Mitigation:</strong> Maintain transparent DAO operations on PeerMe, provide frequent reports, and foster active community engagement (AMAs, updates).</p>
+
+                <h4><span style="color: #ffcc00;">⚠</span> Liquidity Pressure → Buybacks Impacting Market Depth</h4>
+                <p>→ <strong>Mitigation:</strong> Implement staggered or algorithmic buy strategies. Monitor liquidity and adjust intensity via DAO consultation if needed.</p>
+            </section>
+
+            <section id="vision-conclusion" class="content-section glass-section">
+                <h2>🔟 Vision & Conclusion</h2>
+                <p>At <span class="highlight">eBudsDAC</span>, we're more than a DAO; we're a movement. By integrating NFTs, cutting-edge tokenomics (including the v.2 deflationary measures), and true community-driven governance, we're setting a new standard in DeFi. EBUD v.2 represents a disciplined, transparent strategy to address past inflationary pressures and restore robust token value. This "Burn the Past. Fuel the Recovery Engine." initiative will set the stage for a stronger, scarcity-driven EBUD ecosystem, ready for its next chapter of growth and innovation.</p>
+                <p>Whether you're a seasoned crypto enthusiast or a newcomer, there's a place for you in our community. Join us as we build the future, together.</p>
+            </section>
+
+            <section id="get-involved" class="content-section">
+                 <h2>🚀 Get Involved & Stay Updated!</h2>
+                 <ul>
+                    <li><strong>Join our Community & Govern on PeerMe:</strong> <a href="[Link to PeerMe DAO Page / Discord/Telegram]" class="highlight">Link to PeerMe DAO Page</a></li>
+                    <li><strong>Follow our Journey:</strong> <a href="[Link to Twitter/X]" class="highlight">Link to Twitter/X</a></li>
+                    <li><strong>Track EBUD Token on Explorer:</strong> <a href="https://explorer.multiversx.com/tokens/EBUD-d29cce" target="_blank" rel="noopener noreferrer" class="highlight">EBUD Explorer Link</a></li>
+                </ul>
+            </section>
+            
+        </div>
+    </div>
+    <script>
+        // No translation script needed for English-only version.
+    </script>
+</body>
+</html>
