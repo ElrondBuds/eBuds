@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <title>eBuds - Gotcha</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* =====================================
+           Stiluri "Cartoon" pentru pagina Gotcha
+        ====================================== */
+        :root {
+            --cartoon-font: 'Bangers', cursive;
+            --border-cartoon: 3px solid hsl(var(--neon-green));
+            --shadow-cartoon: 5px 5px 0px hsl(var(--neon-purple));
+            --shadow-cartoon-hover: 8px 8px 0px hsl(var(--neon-purple));
+        }
+
+        .gotcha-body {
+            font-family: 'Rajdhani', sans-serif; /* Font de bază pentru text */
+        }
+
+        /* Suprascriem containerul principal pentru un efect mai jucăuș */
+        .gotcha-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background: hsl(var(--dark-bg) / 0.8);
+            border: var(--border-cartoon);
+            border-radius: 25px;
+            box-shadow: var(--shadow-cartoon);
+        }
+
+        /* Titluri în stil cartoon */
+        .gotcha-title {
+            font-family: var(--cartoon-font);
+            font-size: 3.5rem;
+            color: hsl(var(--neon-green));
+            text-align: center;
+            letter-spacing: 3px;
+            text-shadow: 4px 4px 0px #000;
+            margin-bottom: 25px;
+            line-height: 1.1;
+        }
+
+        /* Cardurile de login cu stil nou */
+        .gotcha-option {
+            background: hsl(var(--card-bg));
+            border: var(--border-cartoon);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.2s ease-out;
+            box-shadow: var(--shadow-cartoon);
+        }
+        
+        .gotcha-option:hover {
+            transform: translate(-5px, -5px);
+            box-shadow: var(--shadow-cartoon-hover);
+        }
+
+        .gotcha-option h3 {
+            font-family: var(--cartoon-font);
+            font-size: 2rem;
+            color: hsl(var(--neon-purple));
+            -webkit-text-fill-color: unset;
+            background: none;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        .gotcha-option p {
+            font-size: 1em;
+            color: #eee;
+        }
+
+        /* Butoane cu stil cartoon */
+        .button-gotcha {
+            font-family: var(--cartoon-font);
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            padding: 10px 30px;
+            border: var(--border-cartoon);
+            border-radius: 12px;
+            background: linear-gradient(145deg, hsl(var(--neon-green)), hsl(150, 100%, 60%));
+            color: #000;
+            text-shadow: none;
+            box-shadow: var(--shadow-cartoon);
+            transition: all 0.2s ease-out;
+            cursor: pointer;
+        }
+        .button-gotcha:hover {
+            transform: translate(-5px, -5px) rotate(-2deg);
+            box-shadow: var(--shadow-cartoon-hover);
+        }
+        .button-gotcha:active {
+            transform: translate(0, 0);
+            box-shadow: none;
+        }
+
+        /* Stilul pentru zona de joc */
+        .game-container {
+            text-align: center;
+        }
+        .game-container h2 {
+            font-family: var(--cartoon-font);
+            font-size: 2.5rem;
+            color: hsl(var(--neon-purple));
+            text-shadow: 3px 3px 0px #000;
+        }
+        .game-container p {
+            color: #fff;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .game-card {
+            background-color: hsl(var(--card-bg));
+            border: var(--border-cartoon);
+            border-radius: 15px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--cartoon-font);
+            font-size: 4rem;
+            color: hsl(var(--neon-green));
+            text-shadow: 3px 3px 0 #000;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+            box-shadow: var(--shadow-cartoon);
+        }
+        .game-card:hover {
+            transform: translate(-5px, -5px) scale(1.05);
+            box-shadow: var(--shadow-cartoon-hover);
+        }
+        
+    </style>
+</head>
+<body class="gotcha-body">
+  <div class="background-overlay"></div>
+  <nav class="wallet-nav"> <!-- Reutilizăm stilul nav din wallet pentru consistență -->
+    <div class="wallet-nav-container">
+        <a href="index.html" class="logo-link">
+            <img src="assets/logo.png" alt="eBuds Logo" class="nav-logo-wallet">
+        </a>
+        <div class="nav-title-group">
+            <h1 class="wallet-nav-title" data-translate-key="gotcha_page_title">Gotcha Game</h1>
+        </div>
+        <div class="nav-right-controls">
+             <button id="disconnectBtnNav" class="button-connect-wallet disconnect-button" data-translate-key="disconnect_button" style="display:none; margin-left: 10px;"></button>
+        </div>
+    </div>
+  </nav>
+
+  <div class="gotcha-container">
+    <div class="main-content-area" style="border: none; background: none; box-shadow: none; padding: 0;">
+      
+      <div id="connectionOptions" style="display: block;">
+        <h1 class="gotcha-title" data-translate-key="connect_to_play">Connect to Play!</h1>
+        <div class="status-container" data-status-for="general"></div>
+        <div class="wallet-options-grid" style="gap: 30px;">
+          <div class="gotcha-option">
+            <h3 data-translate-key="xportal_mobile_title">📱 xPortal App</h3>
+            <p data-translate-key="xportal_mobile_description">Scan the QR code with the xPortal app.</p>
+            <div id="qr-code-container" style="margin: 20px auto; max-width: 200px; background: white; padding: 10px; border-radius: 10px;"></div>
+            <div class="status-container" data-status-for="mobile"></div>
+            <button id="mobileBtn" class="button-gotcha" data-translate-key="generate_qr_button">Get QR</button>
+          </div>
+          <div class="gotcha-option" id="extensionWalletOption">
+            <h3 data-translate-key="browser_extension_title">🔌 Browser Extension</h3>
+            <p data-translate-key="browser_extension_description">Connect using the MultiversX browser extension.</p>
+            <div class="status-container" data-status-for="extension" style="margin-top:20px;"></div>
+            <button id="extensionBtn" class="button-gotcha" data-translate-key="connect_extension_button">Connect</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="gameUI" style="display: none;">
+        <div class="status-container" data-status-for="game-load"></div>
+        <div id="game-content" class="game-container">
+            <h2 data-translate-key="welcome_player">Let's Play, eBud!</h2>
+            <p><strong>Connected as:</strong> <span id="playerAddress"></span></p>
+            <p data-translate-key="game_description">Click on a card to find the treasure!</p>
+            <div class="game-board">
+                <div class="game-card">?</div>
+                <div class="game-card">?</div>
+                <div class="game-card">?</div>
+                <div class="game-card">?</div>
+                <div class="game-card">?</div>
+                <div class="game-card">?</div>
+            </div>
+        </div>
+      </div>
+
+      <div class="back-link-container">
+        <a href="index.html" class="back-link" data-translate-key="back_to_main_site">← Back to Main Site</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { ElvenJS } from 'https://unpkg.com/elven.js@0.20.0/build/elven.js';
+
+    const translations = {
+        en: {
+            gotcha_page_title: "Gotcha Game",
+            connect_to_play: "Connect to Play!",
+            welcome_player: "Let's Play, eBud!",
+            game_description: "Click on a card to find the treasure!",
+            xportal_mobile_title: "📱 xPortal App",
+            xportal_mobile_description: "Scan the QR code with the xPortal app.",
+            generate_qr_button: "Get QR",
+            browser_extension_title: "🔌 Browser Extension",
+            browser_extension_description: "Connect using the MultiversX browser extension.",
+            connect_extension_button: "Connect",
+            disconnect_button: "Disconnect",
+            back_button: "Back",
+            back_to_main_site: "← Back to Main Site",
+            elven_init_error: "Error initializing ElvenJS",
+            generating_qr: "Generating QR code...",
+            qr_error: "Error generating QR code",
+            connecting_extension: "Attempting to connect extension...",
+            extension_error: "Error connecting extension",
+            disconnecting: "Disconnecting...",
+            disconnect_error: "Error disconnecting",
+            connecting_init: "Initializing connection...",
+        },
+        ro: {
+            gotcha_page_title: "Jocul Gotcha",
+            connect_to_play: "Conectează-te Să Joci!",
+            welcome_player: "Hai la Joc, eBud!",
+            game_description: "Apasă pe o carte să găsești comoara!",
+            xportal_mobile_title: "📱 Aplicația xPortal",
+            xportal_mobile_description: "Scanează codul QR cu aplicația xPortal.",
+            generate_qr_button: "Generează QR",
+            browser_extension_title: "🔌 Extensie Browser",
+            browser_extension_description: "Conectează-te folosind extensia de browser MultiversX.",
+            connect_extension_button: "Conectare",
+            disconnect_button: "Deconectare",
+            back_button: "Înapoi",
+            back_to_main_site: "← Înapoi la Site-ul Principal",
+            elven_init_error: "Eroare la inițializarea ElvenJS",
+            generating_qr: "Se generează codul QR...",
+            qr_error: "Eroare la generarea codului QR",
+            connecting_extension: "Se încearcă conectarea extensiei...",
+            extension_error: "Eroare la conectarea extensiei",
+            disconnecting: "Se deconectează...",
+            disconnect_error: "Eroare la deconectare",
+            connecting_init: "Se inițiază conectarea...",
+        },
+    };
+
+    // Funcția de traducere rămâne aceeași, dar o includem aici pentru a fi autonomă
+    function translatePage(language) {
+        document.documentElement.lang = language;
+        const translatableElements = document.querySelectorAll('[data-translate-key]');
+        translatableElements.forEach(element => {
+            const key = element.getAttribute('data-translate-key');
+            if (translations[language] && translations[language][key]) {
+                element.innerHTML = translations[language][key];
+            } else if (translations.en && translations.en[key]) {
+                 element.innerHTML = translations.en[key];
+            }
+        });
+        const pageTitleElement = document.querySelector('.wallet-nav-title'); // Actualizat selectorul
+        if (pageTitleElement) {
+            pageTitleElement.textContent = translations[language]?.['gotcha_page_title'] || translations.en['gotcha_page_title'];
+        }
+    }
+
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const connectionOptions = document.getElementById('connectionOptions');
+      const gameUI = document.getElementById('gameUI');
+      const playerAddressSpan = document.getElementById('playerAddress');
+      const languageSelector = document.getElementById('language-selector-wallet');
+      
+      let loginTarget = 'general';
+
+      if (languageSelector) {
+        translatePage(languageSelector.value);
+        languageSelector.addEventListener('change', (event) => {
+            translatePage(event.target.value);
+        });
+      } else {
+        translatePage('en');
+      }
+
+      const hideStatus = () => {
+        document.querySelectorAll('.status-container').forEach(container => {
+            container.innerHTML = '';
+        });
+      };
+
+      const showStatus = (targetType, messageKey, type = 'loading', errorDetails = '') => {
+        hideStatus();
+
+        const targetContainer = document.querySelector(`.status-container[data-status-for="${targetType}"]`);
+        if (!targetContainer) return;
+
+        const currentLang = languageSelector ? languageSelector.value : 'en';
+        let message = (translations[currentLang]?.[messageKey] || translations.en[messageKey] || messageKey).toString();
+        if (type === 'error' && errorDetails) {
+            message += `: ${errorDetails}`;
+        }
+
+        const statusDiv = document.createElement('div');
+        statusDiv.className = `status-message status-${type}`;
+        statusDiv.textContent = message;
+        targetContainer.appendChild(statusDiv);
+      };
+      
+      const showLoginUI = () => {
+        connectionOptions.style.display = 'block';
+        gameUI.style.display = 'none';
+        const qrCodeContainer = document.getElementById('qr-code-container');
+        if (qrCodeContainer) qrCodeContainer.innerHTML = '';
+        document.querySelector('#disconnectBtnNav').style.display = 'none';
+        hideStatus();
+      };
+
+      const showGameUI = (address) => {
+        connectionOptions.style.display = 'none';
+        gameUI.style.display = 'block';
+        playerAddressSpan.textContent = address;
+
+        const disconnectBtnNav = document.getElementById('disconnectBtnNav');
+        if (disconnectBtnNav) {
+            disconnectBtnNav.textContent = (translations[languageSelector.value] || translations.en)['disconnect_button'];
+            disconnectBtnNav.className = 'button-connect-wallet disconnect-button';
+            disconnectBtnNav.style.display = 'inline-block';
+        }
+      };
+
+      const initElven = async () => {
+        try {
+          await ElvenJS.init({
+            chainType: 'mainnet',
+            walletConnectV2ProjectId: 'b8661c4529a06ff0efa2303b7e2ee48e',
+            onLoginStart: () => showStatus(loginTarget, 'connecting_init'),
+            onLoginSuccess: () => {
+              hideStatus();
+              const raw = ElvenJS.storage.get('address');
+              const addressString = typeof raw === 'object' && raw?.address ? raw.address : (typeof raw === 'string' ? raw : '');
+              if (addressString.startsWith('erd1')) {
+                setTimeout(() => showGameUI(addressString), 100);
+              }
+            },
+            onLoginFailure: (error) => {
+                showStatus(loginTarget, 'extension_error', 'error', error.message || 'Unknown Error');
+                setTimeout(hideStatus, 3000);
+            },
+            onQrPending: () => showStatus('mobile', 'generating_qr'),
+            onQrLoaded: () => hideStatus(),
+            onLogoutStart: () => showStatus('game-load', 'disconnecting'),
+            onLogoutSuccess: () => showLoginUI(),
+            onLogoutFailure: (error) => {
+                showStatus('game-load', 'disconnect_error', 'error', error || 'Unknown Error');
+                setTimeout(hideStatus, 3000);
+            },
+          });
+        } catch (err) {
+          showStatus('general', 'elven_init_error', 'error', err.message);
+          setTimeout(hideStatus, 3000);
+        }
+      };
+      
+      await initElven();
+
+      const rawAddress = ElvenJS.storage.get('address');
+      const addressString = typeof rawAddress === 'object' && rawAddress?.address ? raw.address : (typeof rawAddress === 'string' ? raw : '');
+
+      if (addressString.startsWith('erd1')) {
+        setTimeout(() => showGameUI(addressString), 100);
+      } else {
+        showLoginUI();
+      }
+
+      document.getElementById('mobileBtn').addEventListener('click', async () => {
+        try {
+            loginTarget = 'mobile';
+            await ElvenJS.login('mobile', { qrCodeContainer: 'qr-code-container' });
+        } catch (error) {
+            showStatus('mobile', 'qr_error', 'error', error.message);
+        }
+      });
+
+      document.getElementById('extensionBtn').addEventListener('click', async () => {
+        try {
+            loginTarget = 'extension';
+            await ElvenJS.login('browser-extension');
+        } catch (error) {
+            showStatus('extension', 'extension_error', 'error', error.message);
+        }
+      });
+
+      document.getElementById('disconnectBtnNav').addEventListener('click', async () => {
+        await ElvenJS.logout(); 
+      });
+      
+    });
+  </script>
+</body>
+</html>
+
